@@ -108,6 +108,7 @@ object ScalaTransformationOperation {
 
   /**
     * sortByKey 算子
+    * 在一个(K,V)的RDD上调用，K必须实现Ordered接口，返回一个按照key进行排序的(K,V)的RDD
     */
   def sortByKey(): Unit = {
     val conf = new SparkConf().setAppName("sortByKey").setMaster("local[*]")
@@ -122,6 +123,26 @@ object ScalaTransformationOperation {
     sc.stop()
   }
 
+  /**
+    * sortBy 算子
+    * 与sortByKey类似，但是更灵活,可以用func先对数据进行处理，按照处理后的数据比较结果排序。
+    */
+  def sortBy(): Unit = {
+    val conf = new SparkConf().setAppName("sortBy").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+
+    val rdd = sc.parallelize(numbers, 2)
+
+    val result1 = rdd.sortBy(x => x).collect()
+
+    val result2 = rdd.sortBy(x => x % 3).collect()
+
+    println(result1.toBuffer)
+
+    println(result2.toBuffer)
+
+    sc.stop()
+  }
 
   /**
     * join 算子(otherDataset, [numTasks])是连接操作，将输入数据集(K,V)和另外一个数据集(K,W)进行Join， 得到(K, (V,W))；该操作是对于相同K的V和W集合进行笛卡尔积 操作，也即V和W的所有组合；
@@ -130,9 +151,9 @@ object ScalaTransformationOperation {
     val conf = new SparkConf().setAppName("join").setMaster("local[*]")
     val sc = new SparkContext(conf)
 
-    val studentList = Array(new Tuple2[Integer, String](1, "tom"), new Tuple2[Integer, String](2, "jack"), new Tuple2[Integer, String](3, "james"), new Tuple2[Integer, String](4, "andy"))
+    val studentList = Array(new Tuple2[Integer, String](1001, "tom"), new Tuple2[Integer, String](1002, "jack"), new Tuple2[Integer, String](1003, "james"), new Tuple2[Integer, String](1004, "andy"))
 
-    val scoreList = Array(new Tuple2[Integer, Integer](1, 100), new Tuple2[Integer, Integer](2, 90), new Tuple2[Integer, Integer](3, 89), new Tuple2[Integer, Integer](4, 97))
+    val scoreList = Array(new Tuple2[Integer, Integer](1001, 100), new Tuple2[Integer, Integer](1002, 90), new Tuple2[Integer, Integer](1003, 89), new Tuple2[Integer, Integer](1004, 97))
 
     val pairRdd1 = sc.parallelize(studentList)
     val pairRdd2 = sc.parallelize(scoreList)
@@ -166,18 +187,23 @@ object ScalaTransformationOperation {
     val conf = new SparkConf().setAppName("mapPartitions").setMaster("local[*]")
     val sc = new SparkContext(conf)
 
-    val rdd = sc.parallelize(numbers)
+    val rdd = sc.parallelize(numbers, 3)
 
     val result = rdd.mapPartitions(iter => {
+      println("james")
       var res = List[(Int, Int)]()
       while (iter.hasNext) {
-        val cur = iter.next
+        val cur = iter.next()
         res.::=(cur, cur * 2)
       }
       res.iterator
     })
 
-    result.foreach(println)
+    result.foreach(e => {
+      println("-----")
+      println(e)
+    })
+
     sc.stop()
   }
 
@@ -211,7 +237,10 @@ object ScalaTransformationOperation {
 
     val result = rdd1.union(rdd2)
 
-    result.foreach(println)
+    result.foreach(e => {
+      println("--")
+      println(e)
+    })
 
     sc.stop()
   }
@@ -225,7 +254,8 @@ object ScalaTransformationOperation {
     val sc = new SparkContext(conf)
 
     val rdd1 = sc.parallelize(numbers, 2)
-    val rdd2 = sc.parallelize(1 to 10, 2)
+    val rdd2 = sc.parallelize(5 to 8, 2)
+
 
     val result = rdd1.intersection(rdd2)
 
@@ -293,12 +323,11 @@ object ScalaTransformationOperation {
     val conf = new SparkConf().setAppName("coalesce").setMaster("local[*]")
     val sc = new SparkContext(conf)
 
-    val rdd1 = sc.parallelize(numbers, 2)
+    val rdd1 = sc.parallelize(numbers, 6)
+    println(rdd1.getNumPartitions)
 
-    val result = rdd1.coalesce(3, true)
+    val result = rdd1.coalesce(3)
     println(result.getNumPartitions)
-
-    result.foreach(println)
 
     sc.stop()
   }
@@ -311,15 +340,17 @@ object ScalaTransformationOperation {
     val sc = new SparkContext(conf)
 
     val rdd1 = sc.parallelize(numbers, 2)
+    println(rdd1.getNumPartitions)
+    println(rdd1.collect().toBuffer)
 
-    val result = rdd1.repartition(5)
+    val rdd2 = rdd1.repartition(5)
 
-    println("分区数: " + result.getNumPartitions)
-
-    result.foreach(println)
+    println(rdd2.getNumPartitions)
+    println(rdd2.collect().toBuffer)
 
     sc.stop()
   }
+
 
   /**
     * mapPartitionsWithIndex 算子 类似于mapPartitions，但func带有一个整数参数表示分片的索引值，因此在类型为T的RDD上运行时，func的函数类型必须是(Int, Iterator[T]) => Iterator[U])
@@ -342,10 +373,11 @@ object ScalaTransformationOperation {
 
     val nameArray = Array(Tuple2(1, "Spark"), Tuple2(2, "Hadoop"), Tuple2(3, "Flume"), Tuple2(4, "Hive"))
 
-    val typeArray = Array(Tuple2(1, "james"), Tuple2(2, "andy"), Tuple2(3, "jack"), Tuple2(4, "jerry"), Tuple2(5, "tom"),
-      Tuple2(1, "34"), Tuple2(1, "45"), Tuple2(2, "47"), Tuple2(3, "75"), Tuple2(4, "95"), Tuple2(5, "16"), Tuple2(1, "85"))
+    val typeArray = Array(Tuple2(1, "james"), Tuple2(2, "andy"), Tuple2(3, "jack"), Tuple2(4, "jerry"), Tuple2(3, "tom"),
+      Tuple2(1, "34"), Tuple2(1, "45"), Tuple2(2, "47"), Tuple2(3, "75"), Tuple2(4, "95"), Tuple2(3, "16"), Tuple2(1, "85"))
 
     val names = sc.parallelize(nameArray)
+
     val types = sc.parallelize(typeArray)
 
     val nameAndType = names.cogroup(types)
@@ -361,9 +393,9 @@ object ScalaTransformationOperation {
   def sample(): Unit = {
     val conf = new SparkConf().setAppName("sample").setMaster("local[*]")
     val sc = new SparkContext(conf)
+    val rdd = sc.parallelize(numbers, 2)
 
-    val rdd1 = sc.parallelize(numbers, 2)
-    val result = rdd1.sample(true, 0.5)
+    val result = rdd.sample(true, 0.5)
 
     result.foreach(println)
     sc.stop()
@@ -376,20 +408,27 @@ object ScalaTransformationOperation {
     val conf = new SparkConf().setAppName("distinct").setMaster("local[*]")
     val sc = new SparkContext(conf)
 
-    val rdd1 = sc.parallelize(numbers, 2)
+    val rdd1 = sc.parallelize(List(1, 2, 3, 2, 1, 5), 2)
     val result = rdd1.distinct()
     result.foreach(println)
     sc.stop()
   }
 
   /**
-    * aggregateByKey 算子 对源RDD进行去重后返回一个新的RDD
+    * aggregateByKey 算子
+    * 在kv对的RDD中，，按key将value进行分组合并，合并时，将每个value和初始值作为seq函数的参数，进行计算，返回的结果作为一个新的kv对，然后再将结果按照key进行合并，最后将每个分组的value传递给combine函数进行计算（先将前两个value进行计算，将返回结果和下一个value传给combine函数，以此类推），将key与计算结果作为一个新的kv对输出。
+    * seqOp函数用于在每一个分区中用初始值逐步迭代value，combOp函数用于合并每个分区中的结果
     */
   def aggregateByKey(): Unit = {
     val conf = new SparkConf().setAppName("aggregateByKey").setMaster("local[*]")
     val sc = new SparkContext(conf)
 
-    val rdd1 = sc.parallelize(numbers, 2)
+    val rdd1 = sc.parallelize(List((1, 3), (1, 2), (1, 4), (2, 3), (3, 6), (3, 8)), 3)
+
+    val rdd2 = rdd1.aggregateByKey(0)(math.max, _ + _)
+    val result = rdd2.collect()
+    println(result.toBuffer)
+
     sc.stop()
   }
 
@@ -402,12 +441,47 @@ object ScalaTransformationOperation {
 
     val rdd1 = sc.parallelize(numbers, 2)
 
-    val scriptPath = "/home/spark/bin/echo.sh"
+    val scriptPath = "/root/echo.bat"
+
     val pipeRDD = rdd1.pipe(scriptPath)
 
-    print(pipeRDD.collect())
+    println(pipeRDD.collect().toBuffer)
+
     sc.stop()
   }
+
+  /**
+    * partitionBy算子
+    * 对RDD进行分区操作，如果原有的partitionRDD和现有的partitionRDD是一致的话就不进行分区，
+    * 否则会生成ShuffleRDD.
+    */
+  def partitionBy(): Unit = {
+    val conf = new SparkConf().setAppName("partitionBy").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+
+    val rdd1 = sc.parallelize(numbers, 3)
+
+    println(rdd1.getNumPartitions)
+    sc.stop()
+  }
+
+  /**
+    * foldByKey算子
+    * aggregateByKey的简化操作，seqop和combop相同，
+    */
+  def foldByKey(): Unit = {
+    val conf = new SparkConf().setAppName("foldByKey").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+    val rdd1 = sc.parallelize(List((1, 3), (1, 2), (1, 4), (2, 3), (3, 6), (3, 8)), 3)
+
+    val rdd2 = rdd1.foldByKey(0)(_ + _)
+
+    println(rdd2.getNumPartitions)
+    println(rdd2.collect().toBuffer)
+
+    sc.stop()
+  }
+
 
   /**
     * 缓存算子
@@ -417,12 +491,9 @@ object ScalaTransformationOperation {
     val sc = new SparkContext(conf)
 
     val rdd1 = sc.parallelize(numbers)
-
     // 将此rdd的缓存到内存中 只有遇到action算子才会缓存
     val rdd2 = rdd1.cache()
-
     rdd2.count()
-
     // 当执行此方法，持久化的数据就会被删除:
     rdd1.unpersist(true)
 
@@ -430,8 +501,42 @@ object ScalaTransformationOperation {
   }
 
 
+  /**
+    * glomc()算子 将每一个分区形成一个数组，形成新的RDD类型时RDD[Array[T]]
+    */
+  def glomc(): Unit = {
+    val conf = new SparkConf().setAppName("glomc").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+    val rdd1 = sc.parallelize(numbers)
+    // 将此rdd的缓存到内存中 只有遇到action算子才会缓存
+    val rdd2 = rdd1.glom()
+
+    rdd2.collect().foreach(e => {
+      println(e.toBuffer)
+    })
+
+    sc.stop()
+  }
+
+  /**
+    * subtract()算子 计算差的一种函数去除两个RDD中相同的元素，不同的RDD将保留下来
+    */
+  def subtract(): Unit = {
+    val conf = new SparkConf().setAppName("subtract").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+
+    val rdd1 = sc.parallelize(numbers)
+    val rdd2 = sc.parallelize(5 to 10)
+
+    val rdd3 = rdd1.subtract(rdd2)
+
+    rdd3.collect().foreach(println)
+
+    sc.stop()
+  }
+
   def main(args: Array[String]): Unit = {
-    distinct()
+    subtract()
   }
 
 

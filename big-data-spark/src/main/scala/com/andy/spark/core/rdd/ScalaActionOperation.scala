@@ -14,7 +14,7 @@ object ScalaActionOperation {
   val numberArray = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
   def main(args: Array[String]): Unit = {
-    sample()
+    fold()
   }
 
   /**
@@ -31,11 +31,10 @@ object ScalaActionOperation {
     * collect 算子
     */
   def collect(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("collect").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     val map = rdd.map(_ * 2)
-    val result = map.collect()
-    println(result.foreach(e => println(e)))
+    println(map.collect().foreach(println))
     sc.stop()
   }
 
@@ -43,7 +42,7 @@ object ScalaActionOperation {
     * count 算子
     */
   def count(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("count").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     val count = rdd.count()
     println(count)
@@ -55,9 +54,21 @@ object ScalaActionOperation {
     * first 算子
     */
   def first(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("first").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     val result = rdd.first()
+    println(result)
+    sc.stop()
+  }
+
+  /**
+    * aggregate 算子
+    */
+  def aggregate(): Unit = {
+    val sc = new SparkContext(new SparkConf().setAppName("first").setMaster("local[*]"))
+    val rdd = sc.parallelize(numberArray)
+    val result = rdd.aggregate(1)({ (x: Int, y: Int) => x + y }, { (a: Int, b: Int) => a + b })
+
     println(result)
     sc.stop()
   }
@@ -102,7 +113,7 @@ object ScalaActionOperation {
     * top 算子
     */
   def top(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("top").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     val result = rdd.top(5)
     println(result.foreach(e => println(e)))
@@ -113,7 +124,7 @@ object ScalaActionOperation {
     * saveAsTextFile 算子
     */
   def saveAsTextFile(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("saveAsTextFile").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     // rdd.saveAsTextFile("hdfs://node-1:9000/a.txt")
     rdd.saveAsTextFile("file:///e:/tmp/scalaSaveTextFile")
@@ -157,9 +168,9 @@ object ScalaActionOperation {
     * foreach 算子
     */
   def foreach(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("foreach").setMaster("local[*]"))
     val rdd = sc.parallelize(List(1, 2, 3, 4, 2, 4, 2, 1, 1, 1, 1))
-    println(rdd.foreach(e => println(e)))
+    println(rdd.foreach(println))
     sc.stop()
   }
 
@@ -167,7 +178,7 @@ object ScalaActionOperation {
     * fold 算子
     */
   def fold(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("fold").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     println(rdd.fold(0)(_ + _))
     sc.stop()
@@ -177,7 +188,7 @@ object ScalaActionOperation {
     * sample 算子
     */
   def sample(): Unit = {
-    val sc = new SparkContext(new SparkConf().setAppName("action").setMaster("local[*]"))
+    val sc = new SparkContext(new SparkConf().setAppName("sample").setMaster("local[*]"))
     val rdd = sc.parallelize(numberArray)
     val result = rdd.sample(true, 1)
     println(result.foreach(e => println(e)))
