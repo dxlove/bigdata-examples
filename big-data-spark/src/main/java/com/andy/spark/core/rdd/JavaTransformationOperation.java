@@ -22,7 +22,6 @@ import java.util.List;
  **/
 public class JavaTransformationOperation {
 
-
     private List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
     /**
@@ -141,7 +140,7 @@ public class JavaTransformationOperation {
 
         JavaPairRDD<Integer, Integer> secondRDD = rdd2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
 
-        JavaPairRDD<Integer, Tuple2<Integer, Integer>> join = firstRDD.join(secondRDD);
+        JavaPairRDD<Integer, Tuple2<Integer, Integer>> join = (JavaPairRDD<Integer, Tuple2<Integer, Integer>>) firstRDD.join(secondRDD);
 
         join.foreach(e -> System.out.println(e + ""));
 
@@ -161,7 +160,7 @@ public class JavaTransformationOperation {
 
         JavaPairRDD<Integer, Integer> secondRDD = rdd2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
 
-        JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>> result = firstRDD.leftOuterJoin(secondRDD);
+        JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>> result = (JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>>) firstRDD.leftOuterJoin(secondRDD);
 
         result.foreach(e -> System.out.println(e + ""));
 
@@ -180,7 +179,7 @@ public class JavaTransformationOperation {
         JavaPairRDD<Integer, Integer> firstRDD = rdd1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
 
         JavaPairRDD<Integer, Integer> secondRDD = rdd2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
-        JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>> result = firstRDD.rightOuterJoin(secondRDD);
+        JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>> result = (JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>>) firstRDD.rightOuterJoin(secondRDD);
         result.foreach(e -> System.out.println(e + ""));
 
         sparkContext.close();
@@ -280,7 +279,7 @@ public class JavaTransformationOperation {
 
         JavaPairRDD<Integer, Integer> rdd2 = sparkContext.parallelizePairs(scoreList);
 
-        JavaPairRDD<Integer, Tuple2<Iterable<String>, Iterable<Integer>>> result = rdd1.cogroup(rdd2);
+        JavaPairRDD<Integer, Tuple2<Iterable<String>, Iterable<Integer>>> result = (JavaPairRDD<Integer, Tuple2<Iterable<String>, Iterable<Integer>>>) rdd1.cogroup(rdd2);
         System.out.println(result.collect());
 
         sparkContext.close();
@@ -421,7 +420,7 @@ public class JavaTransformationOperation {
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("pipe").setMaster("local[*]"));
         List<String> data = Arrays.asList("hi", "hello", "how", "are", "you");
         sc.parallelize(data)
-                .pipe("e:\\b.bat")
+                .pipe("d:\\root\\echo.bat")
                 .collect()
                 .forEach(System.out::println);
         sc.close();
