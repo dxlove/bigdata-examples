@@ -1,6 +1,6 @@
-package com.andy.spark.sql.dataset
+package com.andy.spark.sql.spark2
 
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 /**
   * <p>

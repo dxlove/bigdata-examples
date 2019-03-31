@@ -14,9 +14,13 @@ object SparkSqlJsonToParquet {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder().appName("jsonToParquet").master("local[*]").getOrCreate()
 
-    val df = spark.read.format("json").load("hdfs://node-1:9000/spark-2.1.3/input1")
+    val dataFrame = spark.read.format("parquet").load("file:///d:/root/logs/parquet/")
 
-    df.write.format("parquet").save("file:///e:/tmp/spark/output1")
+    dataFrame.show(10)
+
+    dataFrame.printSchema()
+
+    dataFrame.write.format("json").save("file:///d:/tmp/spark/output1")
 
     spark.stop()
   }

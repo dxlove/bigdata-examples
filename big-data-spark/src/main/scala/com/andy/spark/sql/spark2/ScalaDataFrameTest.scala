@@ -1,4 +1,4 @@
-package com.andy.spark.sql.dataframe
+package com.andy.spark.sql.spark2
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
