@@ -18,7 +18,7 @@
             
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://39.108.125.41:3306/hive3?useSSL=false</value>
+        <value>jdbc:mysql://39.108.125.41:3306/hive32?useSSL=false</value>
     </property>
 
     <property>
@@ -36,10 +36,19 @@
         <value>cloud</value>
     </property>
 
-    <!-- 配置hive的数据目录 -->
     <property>
-        <name>hive.metastore.warehouse.dir</name>
-        <value>/hive-3.1.1</value>
+        <name>hive.security.authorization.enabled</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.security.authorization.createtable.owner.grants</name>
+        <value>ALL</value>
+    </property>
+
+    <property>
+        <name>hive.security.authorization.task.factory</name>
+        <value>org.apache.hadoop.hive.ql.parse.authorization.HiveAuthorizationTaskFactoryImpl</value>
     </property>
 
 </configuration>

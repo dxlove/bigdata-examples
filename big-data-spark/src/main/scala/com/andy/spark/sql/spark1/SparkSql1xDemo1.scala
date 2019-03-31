@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   * @author leone
   * @since 2018-12-20
   **/
-object SparkSqlDemo1 {
+object SparkSql1xDemo1 {
 
   def main(args: Array[String]): Unit = {
 
@@ -40,6 +40,6 @@ object SparkSqlDemo1 {
     sc.stop()
   }
 
+  case class Person(id: Long, name: String, age: Int, fv: Double)
 }
 
-case class Person(id: Long, name: String, age: Int, fv: Double)

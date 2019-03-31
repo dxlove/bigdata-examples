@@ -42,7 +42,7 @@ object DataFrameTest {
 
   }
 
+  case class Customer(id: Int, name: String, age: Int) {}
 
 }
 
-case class Customer(id: Int, name: String, age: Int) {}
