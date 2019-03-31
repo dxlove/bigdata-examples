@@ -14,7 +14,12 @@ object SparkSql2xDemo1 {
 
   def main(args: Array[String]): Unit = {
 
-    val session = SparkSession.builder().appName("sparkSql").master("local[*]").getOrCreate()
+    val session = SparkSession.builder()
+      .appName("sparkSql")
+      .master("local[*]")
+      // spark sql 2.x 需要手动设置 spark sql 原数据的存储目录
+      .config("spark.sql.warehouse.dir", "file:///d://tmp/spark/warehouse")
+      .getOrCreate()
 
     val lines = session.sparkContext.textFile("hdfs://node-1:9000/spark/input4")
 
