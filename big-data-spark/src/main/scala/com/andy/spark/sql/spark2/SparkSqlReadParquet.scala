@@ -16,16 +16,14 @@ object SparkSqlReadParquet {
       .master("local[*]")
       .getOrCreate()
 
-    val dataFrame = spark.read.parquet("file:///d:/root/logs/parquet/")
+    val dataFrame = spark.read.parquet("file:///root/logs/parquet/")
 
-     dataFrame.show(10)
+    dataFrame.show(10)
 
     dataFrame.printSchema()
 
-
     spark.stop()
   }
-
 
 
 }

@@ -2,7 +2,6 @@ package com.andy.spark.sql.spark2
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * <p>
@@ -13,32 +12,31 @@ import org.apache.spark.{SparkConf, SparkContext}
 object DataFrameTest {
 
   def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setAppName("sql").setMaster("local[*]")
-    val sc = new SparkContext(conf)
-    val session = SparkSession.builder().appName("sparkSql").master("local[*]").getOrCreate()
+
+    val spark = SparkSession.builder().appName("sparkSql").master("local[*]").getOrCreate()
 
     val array: Array[String] = Array("1,james,12", "2,jack,23", "3,andy,34")
 
-    val rdd: RDD[String] = sc.makeRDD(array)
+    val rdd: RDD[String] = spark.sparkContext.makeRDD(array)
 
     val rdd2 = rdd.map(e => {
       val arr = e.split(",")
       Customer(arr(0).toInt, arr(1), arr(2).toInt)
     })
 
-    val frame = session.createDataFrame(rdd2)
+    val frame = spark.createDataFrame(rdd2)
     frame.printSchema()
     frame.show()
     frame.createTempView("customer")
 
-    val sql = session.sql("select * from customer where age > 20 order by age desc")
+    val sql = spark.sql("select * from customer where age > 20 order by age desc")
     sql.show()
 
-//    frame.selectExpr("id", "name").show()
+    //    frame.selectExpr("id", "name").show()
 
-//    frame.where("age > 20").show()
+    //    frame.where("age > 20").show()
 
-//    frame.agg(sum("age"),sum("id"))
+    //    frame.agg(sum("age"),sum("id"))
 
   }
 

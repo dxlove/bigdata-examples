@@ -18,13 +18,11 @@ object SparkSqlReadJson {
     val spark = SparkSession.builder()
       .appName("SparkSqlReadJson")
       .master("local[*]")
-      // spark sql 2.x 需要手动设置 spark sql 原数据的存储目录
-      // .config("spark.sql.warehouse.dir", "file:///d://tmp/spark/warehouse")
       .getOrCreate()
 
     // 基于已有的结构化数据构造 dataFrame
     // {"user_id":4,"username":"郑揩公","sex":"女","age":48,"deleted":false,"tel":"13912350867","create_time":"2010-08-31 09:49:05","integral":9282}
-    val dataFrame = spark.read.json("file:///d:/root/logs/json/")
+    val dataFrame = spark.read.json("file:///root/logs/json/")
 
     // dataFrame.show(10)
 
@@ -58,7 +56,7 @@ object SparkSqlReadJson {
     // caseClassDS.map(_ + 1).show()
 
     // 基于已有的结构化数据构造dataset 首先获取的是一个dataframe然后使用as将dataframe转换为dataset
-    var userDS = spark.read.json("file:///d:/root/logs/json/").as[User]
+    var userDS = spark.read.json("file:///root/logs/json/").as[User]
 
     userDS.show(5)
 

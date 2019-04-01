@@ -16,16 +16,14 @@ object SparkSqlReadText {
       .master("local[*]")
       .getOrCreate()
 
-    val dataFrame = spark.read.json("file:///d:/root/logs/text/")
+    val dataFrame = spark.read.json("file:///root/logs/text/")
 
-     dataFrame.show(10)
+    dataFrame.show(10)
 
     dataFrame.printSchema()
 
-
     spark.stop()
   }
-
 
 
 }

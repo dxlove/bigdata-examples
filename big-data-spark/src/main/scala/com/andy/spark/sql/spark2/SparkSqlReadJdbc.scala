@@ -31,10 +31,10 @@ object SparkSqlReadJdbc {
 
     val dbTable: DataFrame = spark.read.jdbc(jdbcUrl, "t_student", props)
 
-    // 表字段
+    // 打印表的约束信息
     dbTable.printSchema()
 
-    // 数据信息
+    // 显示数据信息
     dbTable.show()
 
     // 使用函数式编程过滤
