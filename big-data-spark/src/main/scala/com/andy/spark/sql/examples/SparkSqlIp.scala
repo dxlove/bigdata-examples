@@ -1,4 +1,4 @@
-package com.andy.spark.sql.spark2
+package com.andy.spark.sql.examples
 
 import org.apache.spark.sql.{Dataset, SparkSession}
 
