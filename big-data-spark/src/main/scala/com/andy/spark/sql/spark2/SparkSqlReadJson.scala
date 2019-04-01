@@ -10,7 +10,7 @@ import org.apache.spark.sql.SparkSession
   **/
 object SparkSqlReadJson {
 
-  case class User(user_id: Long, username: String, age: Long, sex: String, tel: String, create_time: String, integral: Long) {}
+  case class User(user_id: Long, username: String, age: Long, sex: String, tel: String, create_time: String, integral: Long)
 
   case class Person(person_id: Long, age: Int, sex: Int) {}
 
