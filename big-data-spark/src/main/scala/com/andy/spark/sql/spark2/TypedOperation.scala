@@ -62,20 +62,33 @@ object TypedOperation {
     // userDS.intersect(userDS2).show()
 
     // map 将数据集中的每一条数据重新映射返回一条数据
-    userDS.map(e => (e.age, e.age + 1)).show()
+    // userDS.map(e => (e.age, e.age + 1)).show()
 
     // flatMap 数据集中的每条数据都可以返回多条数据
-    userDS.flatMap(e => Seq(User(e.user_id, e.username, e.age + 10, e.sex, e.tel, e.create_time, e.integral))).show()
+    // userDS.flatMap(e => Seq(User(e.user_id, e.username, e.age + 10, e.sex, e.tel, e.create_time, e.integral))).show()
 
     // mapPartitions 一次对一个partition的数据进行处理
-    userDS.mapPartitions(user => {
-      val result = scala.collection.mutable.ArrayBuffer[(String, Long)]()
-      while (user.hasNext) {
-        val u = user.next()
-        result += ((u.username, u.user_id))
-      }
-      result.iterator
-    }).show()
+    //    userDS.mapPartitions(user => {
+    //      val result = scala.collection.mutable.ArrayBuffer[(String, Long)]()
+    //      while (user.hasNext) {
+    //        val u = user.next()
+    //        result += ((u.username, u.user_id))
+    //      }
+    //      result.iterator
+    //    }).show()
+
+
+    // dataset join 操作
+    // userDS.joinWith(userDS2,$"user_id" === $"user_id").show()
+
+    // data sort
+    // userDS.sort($"age".desc).show()
+
+    // val userDSArr = userDS.randomSplit(Array(3, 10, 30))
+    // userDSArr.foreach(ds => ds.show())
+
+    // 抽样
+    userDS.sample(false, 0.3).show()
 
     spark.stop()
 
