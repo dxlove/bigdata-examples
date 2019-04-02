@@ -9,7 +9,7 @@ import org.apache.spark.sql.streaming.OutputMode
   * @author leone
   * @since 2019-03-28
   **/
-object StructuredWordCount {
+object StructuredNcWordCount {
 
   def main(args: Array[String]): Unit = {
 

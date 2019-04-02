@@ -51,7 +51,6 @@ public class ZkLock {
      * 获取锁的原语实现.
      *
      * @throws InterruptedException
-     * @throws KeeperException
      */
     public void acquireLock() throws InterruptedException, KeeperException {
         // 创建锁节点
@@ -63,7 +62,6 @@ public class ZkLock {
     /**
      * 创建锁的原语实现。在lock节点下创建该线程的锁节点
      *
-     * @throws KeeperException
      * @throws InterruptedException
      */
     private void createLock() throws KeeperException, InterruptedException {

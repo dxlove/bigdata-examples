@@ -32,13 +32,15 @@ public class KafkaClient {
         properties.put("bootstrap.servers", KAFKA_BROKER);
     }
 
+    private static ZkUtils zkUtils = ZkUtils.apply(ZOOKEEPER_HOST, 30000, 30000, JaasUtils.isZkSecurityEnabled());
+
     /**
      * 创建topic
      */
     @Test
     public void createTopic() {
         AdminClient adminClient = AdminClient.create(properties);
-        List<NewTopic> newTopics = Arrays.asList(new NewTopic(TOPIC, 1, (short) 1));
+        List<NewTopic> newTopics = Collections.singletonList(new NewTopic(TOPIC, 1, (short) 1));
         CreateTopicsResult result = adminClient.createTopics(newTopics);
         try {
             result.all().get();
@@ -53,7 +55,6 @@ public class KafkaClient {
      */
     @Test
     public void create() {
-        ZkUtils zkUtils = ZkUtils.apply(ZOOKEEPER_HOST, 30000, 30000, JaasUtils.isZkSecurityEnabled());
         // 创建一个3个分区2个副本名为t1的topic
         AdminUtils.createTopic(zkUtils, "t1", 3, 2, new Properties(), RackAwareMode.Enforced$.MODULE$);
         zkUtils.close();
@@ -63,11 +64,9 @@ public class KafkaClient {
      * 查询topic
      */
     @Test
-    public void listTopic() {
-        ZkUtils zkUtils = ZkUtils.apply(ZOOKEEPER_HOST, 30000, 30000, JaasUtils.isZkSecurityEnabled());
+    public void selectTopic() {
         // 获取 topic 所有属性
-        Properties props = AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), "streaming-topic");
-
+        Properties props = AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), "t1");
         Iterator it = props.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
@@ -81,7 +80,6 @@ public class KafkaClient {
      */
     @Test
     public void updateTopic() {
-        ZkUtils zkUtils = ZkUtils.apply(ZOOKEEPER_HOST, 30000, 30000, JaasUtils.isZkSecurityEnabled());
         Properties props = AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), "log-test");
         // 增加topic级别属性
         props.put("min.cleanable.dirty.ratio", "0.4");
@@ -94,11 +92,10 @@ public class KafkaClient {
     }
 
     /**
-     * 删除topic 't1'
+     * 删除topic
      */
     @Test
     public void deleteTopic() {
-        ZkUtils zkUtils = ZkUtils.apply(ZOOKEEPER_HOST, 30000, 30000, JaasUtils.isZkSecurityEnabled());
         AdminUtils.deleteTopic(zkUtils, "t1");
         zkUtils.close();
     }
