@@ -12,7 +12,7 @@ object SparkSqlIp {
 
   def main(args: Array[String]): Unit = {
 
-    val spark = SparkSession.builder().appName("sql").master("local[*]").getOrCreate()
+    val spark = SparkSession.builder().appName("SparkSqlIp").master("local[*]").getOrCreate()
 
     val lines: Dataset[String] = spark.read.textFile("hdfs://node-1:9000/spark/input2")
 

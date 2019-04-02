@@ -19,7 +19,7 @@ object ScalaRDD2DataFrameProgrammatically {
 
     val sqlContext = new SQLContext(sparkContext)
 
-    val rdd = sparkContext.textFile("file:///e:/tmp/input/student")
+    val rdd = sparkContext.textFile("file:///tmp/input/student")
 
     val lineRDD = rdd.map { line => {
       val lines = line.split(",")

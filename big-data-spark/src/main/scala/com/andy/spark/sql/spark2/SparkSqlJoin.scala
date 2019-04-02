@@ -12,6 +12,7 @@ object SparkSqlJoin {
 
   def main(args: Array[String]): Unit = {
 
+    // spark2.x 统一使用sparkSession作为spark的入口
     val spark = SparkSession.builder().appName("sql").master("local[*]").getOrCreate()
 
     import spark.implicits._
@@ -26,18 +27,16 @@ object SparkSqlJoin {
       (id, name, nationCode)
     })
 
-    val df1 = tpDs.toDF("id", "name", "nations")
+    val df1 = tpDs.toDF("user_id", "username", "country_code")
 
     // 表二
-    val nations: Dataset[String] = spark.createDataset(List("china,中国", "usa,美国"))
-
-
-    val df2 = nations.map(l => {
+    val country: Dataset[String] = spark.createDataset(List("china,中国", "usa,美国"))
+    val df2 = country.map(l => {
       val fields = l.split(",")
-      val ename = fields(0)
-      val cname = fields(1)
-      (ename, cname)
-    }).toDF("ename", "cname")
+      val code = fields(0)
+      val name = fields(1)
+      (code, name)
+    }).toDF("code", "name")
 
     // 表一表二关联
 
@@ -46,7 +45,8 @@ object SparkSqlJoin {
     //    val r: DataFrame = spark.sql("select name,cname from v_user join v_nations on v_user.nations = v_nations.ename")
     //    r.show()
 
-    val r = df1.join(df2, $"nations" === $"ename")
+    val r = df1.join(df2, $"country_code" === $"code")
+
     r.show()
 
     spark.stop()

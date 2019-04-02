@@ -17,7 +17,7 @@ object ParquetLoadData {
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
 
-    val usersDF = sqlContext.read.parquet("file:///e:/tmp/input/parquet/user.parquet")
+    val usersDF = sqlContext.read.parquet("file:///tmp/input/parquet/user.parquet")
 
     usersDF.createTempView("t_user")
 

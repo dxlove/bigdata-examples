@@ -22,7 +22,7 @@ object ScalaRDD2DataFrameReflection {
     // 导入隐式转换
     import sqlContext.implicits._
 
-    val rdd = sparkContext.textFile("file:///e:/tmp/input/student")
+    val rdd = sparkContext.textFile("file:///tmp/input/student")
 
     val studentRDD = rdd.map { line => line.split(",") }.map { arr => Student(arr(0).trim().toInt, arr(1), arr(2).toInt) }
 

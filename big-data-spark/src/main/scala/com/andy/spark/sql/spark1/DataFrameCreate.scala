@@ -19,7 +19,7 @@ object DataFrameCreate {
 
     val sqlContext = new SQLContext(sparkContext)
 
-    val df = sqlContext.read.json("file:///e:/tmp/input/json")
+    val df = sqlContext.read.json("file:///tmp/input/json")
 
     df.show()
 

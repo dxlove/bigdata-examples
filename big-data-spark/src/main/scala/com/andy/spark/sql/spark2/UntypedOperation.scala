@@ -12,14 +12,14 @@ object UntypedOperation {
 
   def main(args: Array[String]): Unit = {
 
-    val spark = SparkSession.builder().appName("SparkSql2xOnHive").master("local[*]").getOrCreate()
+    val spark = SparkSession.builder().appName("UntypedOperation").master("local[*]").getOrCreate()
 
     import org.apache.spark.sql.functions._
     import spark.implicits._
 
     // 加载两份数据型成两个dataframe
-    val department = spark.read.json("file:///D:\\root\\logs\\join\\department.json")
-    val employee = spark.read.json("file:///D:\\root\\logs\\join\\employee.json")
+    val department = spark.read.json("file:///root/logs/join/department.json")
+    val employee = spark.read.json("file:///root/logs/join/employee.json")
 
     // 进行计算操作
 
