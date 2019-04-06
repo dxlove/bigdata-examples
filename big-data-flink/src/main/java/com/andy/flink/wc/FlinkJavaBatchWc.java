@@ -19,11 +19,11 @@ public class FlinkJavaBatchWc {
 
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        DataSource<String> dataSource = env.readTextFile("file:///e:/tmp/flink/input");
+        DataSource<String> dataSource = env.readTextFile("file:///root/logs/common/");
 
         DataSet<Tuple2<String, Integer>> sum = dataSource.flatMap(new Tokenizer()).groupBy(0).sum(1).setParallelism(1);
 
-        sum.writeAsCsv("file:///e://tmp/flink/output/result.txt", "\n", ",");
+        sum.writeAsCsv("file:///root/output/flink/result.txt", "\n", ",");
 
         env.execute("batch-wc");
 
