@@ -13,7 +13,7 @@ import java.util.Properties;
  * @author leone
  * @since 2019-01-10
  **/
-public class JavaSparkSqlJdbcTest {
+public class JavaSparkLoadJdbc {
 
     public static void main(String[] args) {
         // 创建 sparkSql 上下文

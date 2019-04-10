@@ -14,37 +14,32 @@ import org.apache.spark.sql.SparkSession;
  * @author leone
  * @since 2019-01-10
  **/
-public class JavaSparkSqlJsonTest {
+public class JavaSparkJdbcJson {
 
     public static void main(String[] args) {
-
-        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("javaSql");
-        JavaSparkContext context = new JavaSparkContext(conf);
-
-        // 创建 sparkSql 上下文
+        // 创建 spark 统一入口
         SparkSession spark = SparkSession.builder()
-                .appName("javaSql")
+                .appName("json")
                 .config("spark.master", "local[*]")
                 .getOrCreate();
 
-        Dataset<Row> df = spark.read().json("file:///E:/tmp/spark/data/user.json");
+        Dataset<Row> df = spark.read().json("file:///root/logs/json/");
         df.show(3);
 
-        df.createOrReplaceTempView("customer");
+        df.createOrReplaceTempView("t_user");
 
-        spark.sql("select * from customer where age > 22").show();
+        spark.sql("select * from t_user where age > 22").show();
 
-//        df.where("age > 23").show();
-//        spark.sql("select count(1) from customer").show();
+        // df.where("age > 23").show();
+        // spark.sql("select count(1) from customer").show();
 
         JavaRDD<Row> javaRDD = df.toJavaRDD();
 
         // dataFrame 和 RDD 转换
         // javaRDD.foreach(e -> System.out.println(e.getLong(0) + "\t" + e.getLong(1) + "\t" + e.getString(2)));
 
-
-        df.write().mode(SaveMode.Append).json("file:///E:/tmp/spark/a.json");
-//        df.write().json("file:///E:/tmp/spark/output5");
+        df.write().mode(SaveMode.Append).json("file:///root/output/json/");
+        // df.write().json("file:///root/output/json/user.json");
 
     }
 
