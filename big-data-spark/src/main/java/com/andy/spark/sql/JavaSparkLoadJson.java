@@ -1,12 +1,10 @@
 package com.andy.spark.sql;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 
 import java.util.List;
 
@@ -20,20 +18,21 @@ public class JavaSparkLoadJson {
 
     public static void main(String[] args) throws AnalysisException {
 
-        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("javaSql");
-        JavaSparkContext context = new JavaSparkContext(conf);
-        SQLContext sqlContext = new SQLContext(context);
-        Dataset<Row> json = sqlContext.read().json("file:///root/logs/json/user.json");
+        SparkSession spark = SparkSession.builder().appName("javaSql").config("spark.master", "local[*]").getOrCreate();
+
+        Dataset<Row> json = spark.read().json("file:///root/logs/json/");
 
         json.createTempView("t_user");
 
-        Dataset<Row> dataset = sqlContext.sql("select * from t_user where age < 34");
+        Dataset<Row> dataset = spark.sql("select * from t_user where age < 34");
 
-        List<String> collect = dataset.javaRDD().map((Function<Row, String>) row -> row.getString(0)).collect();
+        dataset.show();
 
-        System.out.println(collect);
+        List<Long> collect = dataset.javaRDD().map((Function<Row, Long>) row -> row.getLong(0)).collect();
 
+        collect.forEach(System.out::println);
 
+        spark.stop();
     }
 
 }

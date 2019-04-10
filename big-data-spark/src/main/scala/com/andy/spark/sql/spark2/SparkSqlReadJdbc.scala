@@ -24,10 +24,10 @@ object SparkSqlReadJdbc {
         "password" -> "cloud")
     ).load()*/
 
-    val jdbcUrl = "jdbc:mysql://39.108.125.41:3306/db01?useSSL=false"
+    val jdbcUrl = "jdbc:mysql://ip:3306/db01?useSSL=false"
     val props = new Properties()
     props.setProperty("user", "root")
-    props.setProperty("password", "cloud")
+    props.setProperty("password", "xxxx")
 
     val dbTable: DataFrame = spark.read.jdbc(jdbcUrl, "t_student", props)
 

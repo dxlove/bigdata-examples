@@ -1,12 +1,10 @@
 package com.andy.spark.sql;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 
 import java.util.List;
 
@@ -19,25 +17,24 @@ import java.util.List;
 public class JavaSparkLoadParquet {
 
     public static void main(String[] args) {
-        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("javaSql");
-        JavaSparkContext context = new JavaSparkContext(conf);
+        // 创建 sparkSql 上下文
+        SparkSession spark = SparkSession.builder().appName("parquet").config("spark.master", "local[*]").getOrCreate();
 
-        SQLContext sqlContext = new SQLContext(context);
-
-        Dataset<Row> parquet = sqlContext.read().parquet("file:///e:/tmp/input/parquet/user.parquet");
+        Dataset<Row> parquet = spark.read().parquet("file:///root/logs/parquet/");
 
         parquet.registerTempTable("t_user");
 
-        sqlContext.sql("select * from t_user where age < 34").show();
+        spark.sql("select * from t_user where age < 34").show();
 
         JavaRDD<Row> rowJavaRDD = parquet.javaRDD();
 
         JavaRDD<String> map = rowJavaRDD.map((Function<Row, String>) row -> "name" + row.getString(1));
 
         List<String> collect = map.collect();
-        System.out.println(collect);
 
+        collect.forEach(System.out::println);
 
+        spark.stop();
     }
 
 }

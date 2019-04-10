@@ -25,7 +25,7 @@ public class RDD2DataFrameProgrammatically {
         SparkConf conf = new SparkConf().setAppName("rdd").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
         SQLContext sqlContext = new SQLContext(sc);
-        JavaRDD<String> javaRDD = sc.textFile("file:///E:\\tmp\\input\\student");
+        JavaRDD<String> javaRDD = sc.textFile("file:///root/student/");
 
         // 创建javaRDD
         JavaRDD<Row> rows = javaRDD.map((Function<String, Row>) s -> {
@@ -48,7 +48,6 @@ public class RDD2DataFrameProgrammatically {
         Dataset<Row> sql = sqlContext.sql("select id,name,age from t_student where age < 25 order by age desc");
 
         sql.show();
-
 
         List<Row> rowList = dataFrame.javaRDD().collect();
         for (Row row : rowList) {
