@@ -21,11 +21,10 @@ import java.util.List;
 public class RDD2DataFrameProgrammatically {
 
     public static void main(String[] args) throws AnalysisException {
-        // 创建sparkContext
-        SparkConf conf = new SparkConf().setAppName("rdd").setMaster("local[*]");
-        JavaSparkContext sc = new JavaSparkContext(conf);
-        SQLContext sqlContext = new SQLContext(sc);
-        JavaRDD<String> javaRDD = sc.textFile("file:///root/student/");
+        SparkSession spark = SparkSession.builder().master("local[5]").appName("rdd").getOrCreate();
+        JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
+
+        JavaRDD<String> javaRDD = jsc.textFile("file:///root/student/");
 
         // 创建javaRDD
         JavaRDD<Row> rows = javaRDD.map((Function<String, Row>) s -> {
@@ -41,11 +40,11 @@ public class RDD2DataFrameProgrammatically {
 
         StructType structType = DataTypes.createStructType(fieldList);
 
-        Dataset<Row> dataFrame = sqlContext.createDataFrame(rows, structType);
+        Dataset<Row> dataFrame = spark.createDataFrame(rows, structType);
 
         dataFrame.registerTempTable("t_student");
 
-        Dataset<Row> sql = sqlContext.sql("select id,name,age from t_student where age < 25 order by age desc");
+        Dataset<Row> sql = spark.sql("select id,name,age from t_student where age < 25 order by age desc");
 
         sql.show();
 
