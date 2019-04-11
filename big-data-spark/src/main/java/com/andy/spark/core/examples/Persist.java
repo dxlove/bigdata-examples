@@ -32,8 +32,6 @@ public class Persist {
         System.out.println("一共花费了:" + (end - begin) + "毫秒！");
 
         sc.close();
-
     }
-
 
 }

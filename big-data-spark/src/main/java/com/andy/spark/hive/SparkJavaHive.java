@@ -11,7 +11,7 @@ import org.apache.spark.sql.SparkSession;
  * @author leone
  * @since 2019-01-11
  **/
-public class SparkOnHiveJava {
+public class SparkJavaHive {
 
     public static void main(String[] args) {
         SparkConf conf = new SparkConf();

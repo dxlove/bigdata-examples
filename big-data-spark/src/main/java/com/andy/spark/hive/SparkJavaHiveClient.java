@@ -8,7 +8,7 @@ import java.sql.*;
  * @author leone
  * @since 2019-01-13
  **/
-public class HiveClientTest {
+public class SparkJavaHiveClient {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         Class.forName("org.apache.hive.jdbc.HiveDriver");
