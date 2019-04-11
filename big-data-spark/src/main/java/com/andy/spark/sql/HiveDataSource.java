@@ -27,19 +27,21 @@ public class HiveDataSource {
 
         spark.sql("create table if exists t_student(id long, name string, age int)");
 
-        spark.sql("load data local inpath 'file:///e:/input/student/student.txt' into table t_student");
+        spark.sql("load data local inpath 'file:///root/input/student.txt' into table t_student");
 
-        spark.sql("drop table if exists t_student_score");
+        spark.sql("drop table if exists t_sc");
 
-        spark.sql("create if not exists table t_student(id long, student_id int, score int)");
+        spark.sql("create if not exists table t_sc(id long, student_id int, score int)");
 
-        spark.sql("load data local inpath 'file:///e:/input/student/student_course.txt' into table t_student_score");
+        spark.sql("load data local inpath 'file:///root/input/sc.txt' into table t_sc");
 
-        Dataset<Row> sql = spark.sql("select * from t_student_score sc left join t_student s where s.id = sc.student_id");
+        Dataset<Row> sql = spark.sql("select * from t_sc sc left join t_student s where s.id = sc.student_id");
 
-        sql.createTempView("t_sc");
+        sql.createTempView("t_temp");
 
+        spark.sql("select * from t_temp");
 
+        spark.stop();
     }
 
 }

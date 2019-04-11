@@ -5,6 +5,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 
 /**
  * <p>
@@ -15,12 +16,9 @@ import org.apache.spark.sql.SQLContext;
 public class JavaDataFrameCreate {
 
     public static void main(String[] args) {
-        SparkConf conf = new SparkConf().setAppName("dataFrame").setMaster("local[*]");
-        JavaSparkContext sparkContext = new JavaSparkContext(conf);
+        SparkSession spark = SparkSession.builder().master("local[*]").appName("dataFrame").getOrCreate();
 
-        SQLContext sqlContext = new SQLContext(sparkContext);
-
-        Dataset<Row> json = sqlContext.read().json("file:///e:/tmp/input/json");
+        Dataset<Row> json = spark.read().json("file:///root/logs/json/");
 
         // 等于sql中查询所有
         json.show();
@@ -36,6 +34,7 @@ public class JavaDataFrameCreate {
         // 根据某一列进行分组
         json.groupBy(json.col("age")).count().orderBy(json.col("age")).describe("age").show();
 
+        spark.stop();
     }
 
 }
