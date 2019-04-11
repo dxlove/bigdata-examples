@@ -28,7 +28,7 @@ public class RDD2DataFrameReflection {
 
         SQLContext sqlContext = new SQLContext(sc);
 
-        JavaRDD<String> javaRDD = sc.textFile("file:///e:/tmp/input/student");
+        JavaRDD<String> javaRDD = sc.textFile("file:///root/input/student");
 
         JavaRDD<Student> studentJavaRDD = javaRDD.map((Function<String, Student>) s -> {
             String[] lines = s.split(",");
