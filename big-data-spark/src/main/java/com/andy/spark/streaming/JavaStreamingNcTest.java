@@ -19,7 +19,7 @@ import java.util.Arrays;
  * @author leone
  * @since 2018-12-25
  **/
-public class JavaStreamingTest {
+public class JavaStreamingNcTest {
 
     public static void main(String[] args) throws InterruptedException {
         SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("streaming");

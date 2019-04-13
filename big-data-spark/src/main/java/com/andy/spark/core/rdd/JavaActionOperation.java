@@ -99,13 +99,13 @@ public class JavaActionOperation {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-takeSample").setMaster("local[*]"));
         JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
 
-        /**
+        /*
          * false 不可以多次抽样
          * 样本个数num大于父本个数时，只能返回父本个数 15 -> result:[3, 8, 7, 9, 2, 1, 6, 5, 4]
          * 样本个数num小于父本个数时，返回样本个数     5 -> result:[8, 9, 3, 1, 2]
          */
 
-        /**
+        /*
          * true 可以多次抽样
          * 样本个数num大于父本个数时，样本个数num大于父本个数时，返回样本个数 15 -> result:[6, 1, 6, 7, 6, 7, 5, 1, 5, 8, 6, 7, 5, 7, 3]
          * 样本个数num小于父本个数时，样本个数num小于父本个数时，返回样本个数  5 -> result:[6, 5, 2, 8, 6]
@@ -124,13 +124,13 @@ public class JavaActionOperation {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-sample").setMaster("local[*]"));
         JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
 
-        /**
+        /*
          * false 不可以多次抽样
          * 每个元素被抽取到的概率为0.5：fraction=0.5
          * (false, 0.5) -> result: 3 4 5 2 7
          */
 
-        /**
+        /*
          * true 可以多次抽样
          * 每个元素被抽取到的期望次数为2：fraction=2
          * (true, 2) -> result: 1 1 1 2 2 2 8 8 9 9 5 5 6 6 6 6 6 3 3 4
