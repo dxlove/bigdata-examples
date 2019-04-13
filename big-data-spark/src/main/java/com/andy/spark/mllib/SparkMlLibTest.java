@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p> ML lib test
+ * <p> ML lib test 决策树
  *
  * @author leone
  * @since 2019-01-14
