@@ -19,22 +19,20 @@ import java.util.List;
 public class BroadcastVariable {
 
     public static void main(String[] args) {
-        SparkConf conf = new SparkConf().setAppName("variable").setMaster("local");
-
-        JavaSparkContext sc = new JavaSparkContext(conf);
+        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("variable").setMaster("local[*]"));
 
         List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        JavaRDD<Integer> numbersRDD = sc.parallelize(numbers);
+        JavaRDD<Integer> numbersRDD = sc.parallelize(numbers, 3);
 
         final int factor = 3;
         Broadcast<Integer> broadcast = sc.broadcast(factor);
 
         JavaRDD<Integer> map = numbersRDD.map((Function<Integer, Integer>) s -> s * broadcast.value());
 
-        map.foreach((VoidFunction<Integer>) f -> System.out.println(f));
+        map.foreach((VoidFunction<Integer>) System.out::println);
 
-
+        sc.stop();
     }
 
 

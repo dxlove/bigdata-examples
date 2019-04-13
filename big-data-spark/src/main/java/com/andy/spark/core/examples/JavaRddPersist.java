@@ -16,25 +16,24 @@ public class JavaRddPersist {
 
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("persist").setMaster("local[*]"));
 
-        JavaRDD<String> stringJavaRDD = sc.textFile("d:\\root\\logs\\parquet").cache();
-        // avaRDD<String> stringJavaRDD = sc.textFile("file:///root/logs/json").persist(StorageLevel.getCachedStorageLevel());
-        // JavaRDD<String> stringJavaRDD = sc.textFile("file:///root/logs/json");
+        JavaRDD<String> javaRdd = sc.textFile("d:/root/logs/json").cache();
+        // avaRDD<String> stringJavaRDD = sc.textFile("d:/root/logs/json").persist(StorageLevel.getCachedStorageLevel());
+        // JavaRDD<String> stringJavaRDD = sc.textFile("d:/root/logs/json");
 
         long begin = System.currentTimeMillis();
 
-        long count = stringJavaRDD.count();
+        long count = javaRdd.count();
         System.out.println(count);
         long end = System.currentTimeMillis();
 
         System.err.println("time: " + (end - begin) + " millisecond!");
 
-//        begin = System.currentTimeMillis();
-//        count = stringJavaRDD.count();
-//
-//        System.out.println(count);
-//        end = System.currentTimeMillis();
-//        System.err.println("time: " + (end - begin) + " millisecond!");
+        begin = System.currentTimeMillis();
+        count = javaRdd.count();
 
+        System.out.println(count);
+        end = System.currentTimeMillis();
+        System.err.println("time: " + (end - begin) + " millisecond!");
 
         sc.close();
     }

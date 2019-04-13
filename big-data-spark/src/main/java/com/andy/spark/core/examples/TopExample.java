@@ -16,7 +16,7 @@ public class TopExample {
 
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("top").setMaster("local"));
 
-        JavaRDD<String> wordsRDD = sc.textFile("D:\\tmp\\user.dta");
+        JavaRDD<String> wordsRDD = sc.textFile("d:/root/input/user.log");
 
 
         sc.close();
