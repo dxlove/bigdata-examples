@@ -31,9 +31,9 @@ public class ParquetSimpleTest {
 
     private static Logger logger = LoggerFactory.getLogger(ParquetSimpleTest.class);
 
-    private static String inputPath = "e:\\tmp\\input\\parquet\\user.parquet";
+    private static String inputPath = "D:\\root\\logs\\parquet";
 
-    private static String outputPath = "e:\\tmp\\input\\parquet\\user.parquet";
+    private static String outputPath = "D:\\root\\logs\\parquet";
 
     /*
      * 写 Parquet 格式数据需要 schema，读取的话自动识别 schema

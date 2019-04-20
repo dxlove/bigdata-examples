@@ -33,9 +33,9 @@ public class ParquetComplexTest {
 
     private static Random r = new Random();
 
-    private static String inputPath = "e:\\tmp\\input\\parquet\\user.parquet";
+    private static String inputPath = "D:\\root\\logs\\parquet";
 
-    private static String outputPath = "e:\\tmp\\input\\parquet\\user.parquet";
+    private static String outputPath = "D:\\root\\root\\parquet";
 
     private static MessageType schema = Types.buildMessage()
             .required(PrimitiveType.PrimitiveTypeName.INT64).named("user_id")
