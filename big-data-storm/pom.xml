@@ -116,7 +116,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.andy.storm.log.CallLogMain</mainClass>
+                            <mainClass>com.leone.storm.log.CallLogMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
