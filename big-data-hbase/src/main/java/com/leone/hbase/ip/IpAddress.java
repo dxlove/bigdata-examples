@@ -35,6 +35,7 @@ public class IpAddress {
     public static void getIpLocation() throws Exception {
         // GeoIP2-City 数据库文件
         String path = ClassLoader.getSystemResource("GeoLite2-City.mmdb").getPath();
+        System.out.println(path);
         File file = new File(path);
 
         // 创建 DatabaseReader对象
@@ -69,9 +70,7 @@ public class IpAddress {
     }
 
     public static void main(String[] args) throws Exception {
-        String v4IP = getInternetIp();
-        System.out.println(v4IP);
-
+        getIpLocation();
     }
 
     /**
