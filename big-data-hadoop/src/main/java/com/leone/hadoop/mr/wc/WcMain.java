@@ -23,26 +23,25 @@ public class WcMain {
 
         Configuration conf = new Configuration();
         // 设置job运行时要访问的默认文件系统
-        conf.set("fs.defaultFS", "hdfs://node-1:9000");
+        // conf.set("fs.defaultFS", "hdfs://MacBookPro:9000");
         // 设置job提交到哪去运行
-        conf.set("mapreduce.framework.name", "yarn");
-        conf.set("yarn.resourcemanager.hostname", "node-1");
+        // conf.set("mapreduce.framework.name", "yarn");
+        // conf.set("yarn.resourcemanager.hostname", "MacBookPro");
 
 
         Job job = Job.getInstance();
         // 设置运行处理该作业的类
         job.setJarByClass(WcMain.class);
         job.setJobName("WordCount");
-        job.setJar("/root/wc.jar");
+        // job.setJar("/Users/leone/workspace/idea-java/big-data-examples/big-data-hadoop/target/wc.jar");
 
         // 设置 job 的 combiner
         job.setCombinerClass(WcCombiner.class);
 
         // 设置 job 的inputFormat 如果不设置默认是 TextInputFormat
-//        job.setInputFormatClass(CombineFileInputFormat.class);
-//        CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
-//        CombineTextInputFormat.setMinInputSplitSize(job, 2097152);
-
+        // job.setInputFormatClass(CombineFileInputFormat.class);
+        // CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
+        // CombineTextInputFormat.setMinInputSplitSize(job, 2097152);
 
 
         // 封装参数:本次job所要调用的Mapper实现类、Reducer实现类
@@ -60,15 +59,17 @@ public class WcMain {
 
         // 设置这个作业输出结果的路径如果 存在就删除
         Path output = new Path(args[1]);
-        FileSystem fileSystem = output.getFileSystem(conf);
-        if (fileSystem.exists(output)) {
-            fileSystem.delete(output, true);
-        }
 
-        FileSystem fs = FileSystem.get(new URI("hdfs://node-1:9000"), conf, "root");
+//        FileSystem fileSystem = output.getFileSystem(conf);
+//        if (fileSystem.exists(output)) {
+//            fileSystem.delete(output, true);
+//        }
+
+        FileSystem fs = FileSystem.get(new URI(args[1]), conf, "leone");
         if (fs.exists(output)) {
             fs.delete(output, true);
         }
+
 
         // 设置这个作业输入数据的路径
         FileInputFormat.addInputPath(job, new Path(args[0]));

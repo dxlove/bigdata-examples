@@ -15,7 +15,7 @@ public class JavaSparkLoadCsv {
     public static void main(String[] args) {
         SparkSession spark = SparkSession.builder().appName("csv").master("local[*]").getOrCreate();
 
-        Dataset<Row> parquet = spark.read().format("csv").load("file:///root/logs/csv/");
+        Dataset<Row> parquet = spark.read().format("csv").load("file:///Users/leone/Documents/logs/csv/");
 
         parquet.printSchema();
 

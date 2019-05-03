@@ -27,6 +27,12 @@
             <groupId>com.maxmind.geoip2</groupId>
             <artifactId>geoip2</artifactId>
             <version>2.12.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- scala 依赖 -->
@@ -77,12 +83,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
             <version>${spark.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- 指定hadoop-client API的版本 -->
@@ -128,20 +128,7 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql-kafka-0-10_2.11</artifactId>
             <version>${spark.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.7.5</version>
-        </dependency>
-
 
     </dependencies>
 
