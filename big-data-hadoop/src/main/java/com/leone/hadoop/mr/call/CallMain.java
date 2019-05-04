@@ -70,14 +70,15 @@ public class CallMain {
         job.setMapperClass(CallMapper.class);
         job.setReducerClass(CallReduce.class);
 
+        // input path
         FileInputFormat.setInputPaths(job, new Path(args[0]));
 
-        Path outputPath = new Path(args[1]);
-        FileSystem fileSystem = outputPath.getFileSystem(configuration);
-        if (fileSystem.exists(outputPath)) {
-            fileSystem.delete(outputPath);
+        Path output = new Path(args[1]);
+        FileSystem fileSystem = output.getFileSystem(configuration);
+        if (fileSystem.exists(output)) {
+            fileSystem.delete(output);
         }
-        FileOutputFormat.setOutputPath(job, outputPath);
+        FileOutputFormat.setOutputPath(job, output);
 
         job.waitForCompletion(true);
     }
