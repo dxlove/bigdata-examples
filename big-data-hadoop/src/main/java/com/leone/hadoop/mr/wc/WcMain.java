@@ -21,17 +21,17 @@ public class WcMain {
         // 默认以本地模式运行
         Configuration conf = new Configuration();
         // 设置job运行时要访问的默认文件系统
-        conf.set("fs.defaultFS", "hdfs://node-1:9000");
+//         conf.set("fs.defaultFS", "hdfs://39.108.125.41:9000");
         // 设置job提交到哪去运行
-        conf.set("mapreduce.framework.name", "yarn");
-        conf.set("yarn.resourcemanager.hostname", "node-1");
+//         conf.set("mapreduce.framework.name", "yarn");
+//         conf.set("yarn.resourcemanager.hostname", "node-1");
 
         Job job = Job.getInstance();
 
         // 设置 job 的信息
         job.setJarByClass(WcMain.class);
         // job 的 jar 包路径
-        job.setJar(args[2]);
+        // job.setJar(args[2]);
         // job 名称
         job.setJobName("WordCount");
 
