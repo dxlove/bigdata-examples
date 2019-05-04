@@ -10,6 +10,12 @@ import com.alibaba.fastjson.JSONObject;
  **/
 public class JsonToStringUtil {
 
+    /**
+     * json转换为string
+     *
+     * @param jsonObj json对象
+     * @return string类型的json
+     */
     public static String toString(JSONObject jsonObj) {
         StringBuilder sb = new StringBuilder();
         sb.append(jsonObj.get("sdk_ver")).append("\001").append(jsonObj.get("time_zone")).append("\001")

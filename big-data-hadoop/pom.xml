@@ -11,6 +11,10 @@
 
     <artifactId>big-data-hadoop</artifactId>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -39,8 +43,8 @@
 
     </dependencies>
 
-
     <build>
+        <finalName>wc</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
