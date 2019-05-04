@@ -1,4 +1,4 @@
-package com.leone.hadoop.client;
+package com.leone.hadoop.hdfs;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -17,7 +17,7 @@ import java.net.URI;
  **/
 public class HdfsClientTest {
 
-    FileSystem fs = null;
+    private FileSystem fs = null;
 
     /**
      * 初始化
@@ -45,10 +45,9 @@ public class HdfsClientTest {
      * 下载文件
      *
      * @throws Exception
-     * @throws IOException
      */
     @Test
-    public void download() throws Exception, IOException {
+    public void download() throws Exception {
         fs.copyToLocalFile(new Path("/hadoop-2.7.7/input1/words.txt"), new Path("file:///E:/hadoop/words.txt"));
     }
 
