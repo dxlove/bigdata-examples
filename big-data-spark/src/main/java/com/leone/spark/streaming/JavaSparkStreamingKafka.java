@@ -23,7 +23,7 @@ import java.util.*;
  * @author leone
  * @since 2018-12-25
  **/
-public class JavaStreamingKafkaTest {
+public class JavaSparkStreamingKafka {
 
     public static void main(String[] args) throws InterruptedException {
         // 创建SparkConf对象
