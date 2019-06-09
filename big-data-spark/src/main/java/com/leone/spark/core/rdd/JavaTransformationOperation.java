@@ -9,10 +9,7 @@ import org.apache.spark.api.java.function.*;
 import org.junit.Test;
 import scala.Tuple2;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p> Transformation （转换/变换）算子
@@ -22,7 +19,7 @@ import java.util.List;
  **/
 public class JavaTransformationOperation {
 
-    private List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+    private List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
     /**
      * 算子
@@ -40,10 +37,10 @@ public class JavaTransformationOperation {
         SparkConf conf = new SparkConf().setAppName("map").setMaster("local[*]");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
         // 并行化集合，初始化RDD
-        JavaRDD<Integer> rdd = sparkContext.parallelize(numbers);
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers);
         // map 算子是对任何 RDD 都可以调用的，在 java 中 map 算子接受的是 function 对象
-        JavaRDD<Integer> multipleNumberRDD = rdd.map((Function<Integer, Integer>) integer -> integer * 2);
-        multipleNumberRDD.foreach((VoidFunction<Integer>) integer -> System.out.println(integer + ""));
+        JavaRDD<Integer> mapRDD = javaRDD.map((Function<Integer, Integer>) integer -> integer * 2);
+        mapRDD.foreach((VoidFunction<Integer>) integer -> System.err.println(integer + ""));
 
         sparkContext.close();
     }
@@ -55,9 +52,9 @@ public class JavaTransformationOperation {
     public void flatMap() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("flatMap").setMaster("local[*]"));
         List<String> lineList = Arrays.asList("hello you", "hello me", "hello world");
-        JavaRDD<String> rdd = sparkContext.parallelize(lineList);
-        JavaRDD<String> words = rdd.flatMap((FlatMapFunction<String, String>) line -> Arrays.asList(line.split(" ")).iterator());
-        words.foreach((VoidFunction<String>) s -> System.out.println(s + ""));
+        JavaRDD<String> javaRDD = sparkContext.parallelize(lineList);
+        JavaRDD<String> words = javaRDD.flatMap((FlatMapFunction<String, String>) line -> Arrays.asList(line.split(" ")).iterator());
+        words.foreach((VoidFunction<String>) s -> System.err.println(s + ""));
         sparkContext.close();
     }
 
@@ -68,18 +65,15 @@ public class JavaTransformationOperation {
     @Test
     public void mapPartitions() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("mapPartitions").setMaster("local[*]"));
-        JavaRDD<Integer> rdd = sparkContext.parallelize(numbers, 2);
-        JavaRDD<Integer> result = rdd.mapPartitions((FlatMapFunction<Iterator<Integer>, Integer>) integerIterator -> {
-            int isum = 0;
-            while (integerIterator.hasNext()) {
-                isum += integerIterator.next();
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers, 2);
+        JavaRDD<Integer> result = javaRDD.mapPartitions((FlatMapFunction<Iterator<Integer>, Integer>) partitions -> {
+            int sum = 0;
+            while (partitions.hasNext()) {
+                sum += partitions.next();
             }
-            LinkedList<Integer> linkedList = new LinkedList<>();
-            linkedList.add(isum);
-            return linkedList.iterator();
+            return Collections.singletonList(sum).iterator();
         });
-
-        result.foreach(e -> System.out.println(e + ""));
+        result.foreach(e -> System.err.println(e + ""));
         sparkContext.close();
     }
 
@@ -89,9 +83,9 @@ public class JavaTransformationOperation {
     @Test
     public void glom() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("glom").setMaster("local[*]"));
-        JavaRDD<Integer> rdd = sparkContext.parallelize(numbers, 2);
-        JavaRDD<List<Integer>> glom = rdd.glom();
-        glom.foreach(e -> System.out.println(e + ""));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers, 2);
+        JavaRDD<List<Integer>> glomRDD = javaRDD.glom();
+        glomRDD.foreach(e -> System.out.println(e + ""));
         sparkContext.close();
     }
 
@@ -102,12 +96,11 @@ public class JavaTransformationOperation {
     @Test
     public void union() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("union").setMaster("local[*]"));
-        JavaRDD<Integer> rdd1 = sparkContext.parallelize(Arrays.asList(1, 2, 7, 4, 7));
-        JavaRDD<Integer> rdd2 = sparkContext.parallelize(Arrays.asList(2, 3, 3, 6, 7));
+        JavaRDD<Integer> javaRDD1 = sparkContext.parallelize(Arrays.asList(1, 2, 7, 4, 7));
+        JavaRDD<Integer> javaRDD2 = sparkContext.parallelize(Arrays.asList(2, 3, 3, 6, 7));
 
-        JavaRDD<Integer> union = rdd1.union(rdd2);
-
-        union.foreach(e -> System.out.println(e + ""));
+        JavaRDD<Integer> unionRDD = javaRDD1.union(javaRDD2);
+        System.out.println(unionRDD.collect());
         sparkContext.close();
     }
 
@@ -118,11 +111,11 @@ public class JavaTransformationOperation {
     public void intersection() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("intersection").setMaster("local[*]"));
 
-        JavaRDD<Integer> rdd1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
-        JavaRDD<Integer> rdd2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 8, 5));
+        JavaRDD<Integer> javaRDD1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
+        JavaRDD<Integer> javaRDD2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 8, 5));
 
-        JavaRDD<Integer> sample = rdd1.intersection(rdd2);
-        System.out.println(sample.collect());
+        JavaRDD<Integer> intersectionRDD = javaRDD1.intersection(javaRDD2);
+        System.out.println(intersectionRDD.collect());
 
         sparkContext.close();
     }
@@ -133,36 +126,46 @@ public class JavaTransformationOperation {
     @Test
     public void join() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("join").setMaster("local[*]"));
-        JavaRDD<Integer> rdd1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
-        JavaRDD<Integer> rdd2 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
+        JavaRDD<Integer> javaRDD1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
+        JavaRDD<Integer> javaRDD2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 8, 5));
 
-        JavaPairRDD<Integer, Integer> firstRDD = rdd1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
+        // 类似 python 中的 tuple
+        JavaPairRDD<Integer, Integer> javaPairRDD1 = javaRDD1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
 
-        JavaPairRDD<Integer, Integer> secondRDD = rdd2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
+        JavaPairRDD<Integer, Integer> javaPairRDD2 = javaRDD2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
 
-        JavaPairRDD<Integer, Tuple2<Integer, Integer>> join = (JavaPairRDD<Integer, Tuple2<Integer, Integer>>) firstRDD.join(secondRDD);
+        // 只有 key 相同的 (1, 3, 5) 被 join
+        JavaPairRDD<Integer, Tuple2<Integer, Integer>> joinedRDD = javaPairRDD1.join(javaPairRDD2);
 
-        join.foreach(e -> System.out.println(e + ""));
+        joinedRDD.foreach(e -> System.err.println(e + ""));
+        //System.err.println(joinedRDD.collectAsMap());
 
         sparkContext.close();
     }
 
     /**
-     * leftOuterJoin 算子 根据两个RDD来进行做外连接，右边没有的值会返回一个None。右边有值的话会返回一个Some。
+     * leftOuterJoin算子 根据两个RDD来进行做外连接，右边没有的值会返回一个None。右边有值的话会返回一个Some。
      */
     @Test
     public void leftOuterJoin() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("leftOuterJoin").setMaster("local[*]"));
-        JavaRDD<Integer> rdd1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
-        JavaRDD<Integer> rdd2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 7, 5));
+        JavaRDD<Integer> javaRDD1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
+        JavaRDD<Integer> javaRDD2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 8, 5));
 
-        JavaPairRDD<Integer, Integer> firstRDD = rdd1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
+        // 类似 python 中的 tuple
+        JavaPairRDD<Integer, Integer> javaPairRDD1 = javaRDD1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
 
-        JavaPairRDD<Integer, Integer> secondRDD = rdd2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
+        JavaPairRDD<Integer, Integer> javaPairRDD2 = javaRDD2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
 
-        JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>> result = (JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>>) firstRDD.leftOuterJoin(secondRDD);
+        JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>> leftOuterJoinRDD = javaPairRDD1.leftOuterJoin(javaPairRDD2);
 
-        result.foreach(e -> System.out.println(e + ""));
+        JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>> rightOuterJoinRDD = javaPairRDD1.rightOuterJoin(javaPairRDD2);
+
+        leftOuterJoinRDD.foreach(e -> System.err.println(e + ""));
+
+        System.out.println("-------------");
+
+        rightOuterJoinRDD.foreach(e -> System.err.println(e + ""));
 
         sparkContext.close();
     }
@@ -173,14 +176,17 @@ public class JavaTransformationOperation {
     @Test
     public void rightOuterJoin() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("leftOuterJoin").setMaster("local[*]"));
-        JavaRDD<Integer> rdd1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
-        JavaRDD<Integer> rdd2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 7, 5));
+        JavaRDD<Integer> javaRDD1 = sparkContext.parallelize(Arrays.asList(1, 2, 3, 4, 5));
+        JavaRDD<Integer> javaRDD2 = sparkContext.parallelize(Arrays.asList(1, 9, 3, 8, 5));
 
-        JavaPairRDD<Integer, Integer> firstRDD = rdd1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
+        // 类似 python 中的 tuple
+        JavaPairRDD<Integer, Integer> javaPairRDD1 = javaRDD1.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 10));
 
-        JavaPairRDD<Integer, Integer> secondRDD = rdd2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
-        JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>> result = (JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>>) firstRDD.rightOuterJoin(secondRDD);
-        result.foreach(e -> System.out.println(e + ""));
+        JavaPairRDD<Integer, Integer> javaPairRDD2 = javaRDD2.mapToPair((PairFunction<Integer, Integer, Integer>) integer -> new Tuple2<>(integer, integer * 100));
+
+        JavaPairRDD<Integer, Tuple2<Optional<Integer>, Integer>> rightOuterJoinRDD = javaPairRDD1.rightOuterJoin(javaPairRDD2);
+
+        rightOuterJoinRDD.foreach(e -> System.err.println(e + ""));
 
         sparkContext.close();
     }
@@ -191,10 +197,12 @@ public class JavaTransformationOperation {
     @Test
     public void cartesian() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("cartesian").setMaster("local[*]"));
-        List<Integer> data = Arrays.asList(1, 2, 4, 3, 5, 6, 7);
-        JavaRDD<Integer> javaRDD = sparkContext.parallelize(data);
-        JavaPairRDD<Integer, Integer> cartesianRDD = javaRDD.cartesian(javaRDD);
-        System.out.println(cartesianRDD.collect());
+        JavaRDD<Integer> javaRDD1 = sparkContext.parallelize(Arrays.asList(1, 3, 5, 7, 9));
+        JavaRDD<Integer> javaRDD2 = sparkContext.parallelize(Arrays.asList(0, 2, 4, 6, 8));
+
+        JavaPairRDD<Integer, Integer> cartesianRDD = javaRDD1.cartesian(javaRDD2);
+
+        System.err.println(cartesianRDD.collect());
         sparkContext.close();
     }
 
@@ -204,12 +212,14 @@ public class JavaTransformationOperation {
     @Test
     public void coalesce() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("coalesce").setMaster("local[*]"));
-        List<Integer> data = Arrays.asList(1, 2, 4, 3, 5, 6, 7, 8, 9, 10);
-        JavaRDD<Integer> javaRDD = sparkContext.parallelize(data, 5);
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers, 5);
+
         System.out.println(javaRDD.getNumPartitions());
+
         JavaRDD<Integer> coalesce = javaRDD.coalesce(2, true);
-        System.out.println(coalesce.collect());
+
         System.out.println(coalesce.getNumPartitions());
+
         sparkContext.close();
     }
 
@@ -220,11 +230,12 @@ public class JavaTransformationOperation {
     @Test
     public void repartition() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("repartition").setMaster("local[*]"));
-        List<Integer> data = Arrays.asList(1, 2, 4, 3, 5, 6, 7, 8, 9, 10);
-        JavaRDD<Integer> javaRDD = sparkContext.parallelize(data, 5);
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers, 5);
+
         System.out.println(javaRDD.getNumPartitions());
+
         JavaRDD<Integer> coalesce = javaRDD.repartition(3);
-        System.out.println(coalesce.collect());
+
         System.out.println(coalesce.getNumPartitions());
         sparkContext.close();
     }
