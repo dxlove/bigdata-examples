@@ -4,24 +4,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.andy</groupId>
-    <artifactId>big-data-examples</artifactId>
-    <version>1.0.1.RELEASE</version>
+    <groupId>com.leone.bigdata</groupId>
+    <artifactId>bigdata-examples</artifactId>
+    <version>1.1.0.RELEASE</version>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>big-data-zookeeper</module>
-        <module>big-data-hadoop</module>
-        <module>big-data-hive</module>
-        <module>big-data-spark</module>
-        <module>big-data-kafka</module>
-        <module>big-data-lucene</module>
-        <module>big-data-redis</module>
-        <module>big-data-storm</module>
-        <module>big-data-common</module>
-        <module>big-data-hbase</module>
-        <module>big-data-flink</module>
+        <module>bigdata-zookeeper</module>
+        <module>bigdata-hadoop</module>
+        <module>bigdata-hive</module>
+        <module>bigdata-spark</module>
+        <module>bigdata-kafka</module>
+        <module>bigdata-lucene</module>
+        <module>bigdata-redis</module>
+        <module>bigdata-storm</module>
+        <module>bigdata-common</module>
+        <module>bigdata-hbase</module>
+        <module>bigdata-flink</module>
     </modules>
 
     <build>
