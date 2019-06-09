@@ -18,7 +18,6 @@ import java.util.List;
 public class AccumulatorVariable {
 
     public static void main(String[] args) {
-
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("accumulator").setMaster("local"));
 
         List<String> lineList = Arrays.asList("hello you", "hello me", "hello world");

@@ -21,38 +21,37 @@ public class JavaLambdaWordCount {
 
     public static void main(String[] args) {
 
-        SparkConf sparkConf = new SparkConf().setAppName("java-lambda-word-count").setMaster("local[4]");
+        SparkConf sparkConf = new SparkConf().setAppName("java-lambda-word-count").setMaster("local[*]");
 
         // 创建 sparkContext
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
 
         // 指定从哪里读取数据
-        JavaRDD<String> lines = sparkContext.textFile(args[0]);
+        JavaRDD<String> javaRDD = sparkContext.textFile(args[0]);
 
         // 切分压平
-        JavaRDD<String> words = lines.flatMap((FlatMapFunction<String, String>) line -> Arrays.asList(line.split(" ")).iterator());
+        JavaRDD<String> flatMapJavaRDD = javaRDD.flatMap((FlatMapFunction<String, String>) line -> Arrays.asList(line.split(",")).iterator());
 
         // 将单词组合在一起
-        JavaPairRDD<String, Integer> wordAndOne = words.mapToPair((PairFunction<String, String, Integer>) word -> new Tuple2<>(word, 1));
+        JavaPairRDD<String, Integer> pairJavaRDD = flatMapJavaRDD.mapToPair((PairFunction<String, String, Integer>) word -> new Tuple2<>(word, 1));
 
         // 聚合
-        JavaPairRDD<String, Integer> reduce = wordAndOne.reduceByKey((Function2<Integer, Integer, Integer>) (v1, v2) -> v1 + v2);
+        JavaPairRDD<String, Integer> reduceByKeyRDD = pairJavaRDD.reduceByKey((Function2<Integer, Integer, Integer>) Integer::sum);
+
+        // 交换
+        JavaPairRDD<Integer, String> swapRDD = reduceByKeyRDD.mapToPair((PairFunction<Tuple2<String, Integer>, Integer, String>) Tuple2::swap);
 
         // 排序
-        JavaPairRDD<Integer, String> swap = reduce.mapToPair((PairFunction<Tuple2<String, Integer>, Integer, String>) Tuple2::swap);
-
-        // 排序
-        JavaPairRDD<Integer, String> sorted = swap.sortByKey(false);
+        JavaPairRDD<Integer, String> sortedRDD = swapRDD.sortByKey(false);
 
         // 调整顺序
-        JavaPairRDD<String, Integer> result = sorted.mapToPair((PairFunction<Tuple2<Integer, String>, String, Integer>) Tuple2::swap);
+        JavaPairRDD<String, Integer> result = sortedRDD.mapToPair((PairFunction<Tuple2<Integer, String>, String, Integer>) Tuple2::swap);
 
         // 将数据保存到指定位置中
         result.saveAsTextFile(args[1]);
 
         // 关闭 sparkContext
         sparkContext.stop();
-
     }
 
 }

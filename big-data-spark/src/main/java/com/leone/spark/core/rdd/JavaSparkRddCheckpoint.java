@@ -19,41 +19,35 @@ import java.util.List;
 public class JavaSparkRddCheckpoint {
 
     public static void main(String[] args) {
-        JavaSparkContext sc = null;
         try {
-            SparkConf conf = new SparkConf().setAppName("spark-checkpoint").setMaster("local[*]");
-            sc = new JavaSparkContext(conf);
-
+            JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("spark-checkpoint").setMaster("local[*]"));
             // 设置 checkpoint 目录
-            sc.setCheckpointDir("file:///E:/tmp/spark/output1");
+            sparkContext.setCheckpointDir("file:///tmp/output/");
 
-            JavaRDD<String> rdd = sc.textFile("file:///E:/tmp/hadoop/input1");
+            JavaRDD<String> rdd = sparkContext.textFile("file:///tmp/input/hello.txt");
 
             // 注意： 现需要对RDD进行缓存
-            JavaPairRDD<String, Integer> pairRDD = rdd.flatMapToPair((PairFlatMapFunction<String, String, Integer>) s -> {
-                List<Tuple2<String, Integer>> list = new ArrayList<>();
-                String[] arr = s.split(" ");
-                for (String ele : arr) {
-                    list.add(new Tuple2<>(ele, 1));
+            JavaPairRDD<String, Integer> javaPairRDD = rdd.flatMapToPair((PairFlatMapFunction<String, String, Integer>) s -> {
+                String[] arrays = s.split(" ");
+                List<Tuple2<String, Integer>> list = new ArrayList<>(arrays.length);
+                for (String arr : arrays) {
+                    list.add(new Tuple2<>(arr, 1));
                 }
                 return list.iterator();
             }).cache();
 
-            //为pairRDD设置检查点
-            pairRDD.checkpoint();
+            // 为pairRDD设置检查点
+            javaPairRDD.checkpoint();
 
-            System.err.println("isCheckpointed:" + pairRDD.isCheckpointed() + " ===== checkpoint:" + pairRDD.getCheckpointFile());
+            System.err.println("isCheckpointed:" + javaPairRDD.isCheckpointed() + " -- checkpoint:" + javaPairRDD.getCheckpointFile());
 
-            pairRDD.collect();
+            javaPairRDD.collect();
 
-            System.err.println("isCheckpointed:" + pairRDD.isCheckpointed() + " ===== checkpoint:" + pairRDD.getCheckpointFile());
+            System.err.println("isCheckpointed:" + javaPairRDD.isCheckpointed() + " -- checkpoint:" + javaPairRDD.getCheckpointFile());
 
+            sparkContext.close();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (sc != null) {
-                sc.close();
-            }
         }
     }
 }

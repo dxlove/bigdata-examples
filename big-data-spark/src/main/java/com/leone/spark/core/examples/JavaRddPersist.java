@@ -12,10 +12,9 @@ import org.apache.spark.api.java.JavaSparkContext;
  **/
 public class JavaRddPersist {
     public static void main(String[] args) {
-
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("persist").setMaster("local[*]"));
 
-        JavaRDD<String> javaRdd = sc.textFile("d:/root/logs/json").cache();
+        JavaRDD<String> javaRdd = sc.textFile("file:///root/logs/json").cache();
         // avaRDD<String> stringJavaRDD = sc.textFile("d:/root/logs/json").persist(StorageLevel.getCachedStorageLevel());
         // JavaRDD<String> stringJavaRDD = sc.textFile("d:/root/logs/json");
 

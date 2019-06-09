@@ -21,16 +21,16 @@ import java.util.Map;
  **/
 public class JavaActionOperation {
 
-    private static List<Integer> numberList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    private static List<Integer> numberList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
     /**
      * reduce 算子，通过func函数聚集RDD中的所有元素，这个功能必须是可交换且可并联的
      */
     @Test
     public void reduce() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-reduce").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        Integer reduce = numbers.reduce((Function2<Integer, Integer, Integer>) (i1, i2) -> i1 + i2);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("reduce").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        Integer reduce = javaRDD.reduce((Function2<Integer, Integer, Integer>) Integer::sum);
         System.out.println(reduce);
         sparkContext.close();
     }
@@ -41,9 +41,9 @@ public class JavaActionOperation {
      */
     @Test
     public void collect() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-collect").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        JavaRDD<Integer> map = numbers.map((Function<Integer, Integer>) s -> s * 2);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("collect").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        JavaRDD<Integer> map = javaRDD.map((Function<Integer, Integer>) s -> s * 2);
         List<Integer> collect = map.collect();
         for (Integer num : collect) {
             System.out.println(num);
@@ -56,9 +56,9 @@ public class JavaActionOperation {
      */
     @Test
     public void count() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-count").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        long count = numbers.count();
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("count").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        long count = javaRDD.count();
         System.out.println(count);
         sparkContext.close();
     }
@@ -68,9 +68,9 @@ public class JavaActionOperation {
      */
     @Test
     public void first() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-first").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        Integer first = numbers.first();
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("first").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        Integer first = javaRDD.first();
         System.out.println(first);
         sparkContext.close();
     }
@@ -81,9 +81,9 @@ public class JavaActionOperation {
      */
     @Test
     public void take() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-take").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        List<Integer> take = numbers.take(5);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("take").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        List<Integer> take = javaRDD.take(5);
         System.out.println(Arrays.toString(take.toArray()));
         sparkContext.close();
     }
@@ -97,7 +97,7 @@ public class JavaActionOperation {
     @Test
     public void takeSample() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-takeSample").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
 
         /*
          * false 不可以多次抽样
@@ -111,7 +111,7 @@ public class JavaActionOperation {
          * 样本个数num小于父本个数时，样本个数num小于父本个数时，返回样本个数  5 -> result:[6, 5, 2, 8, 6]
          */
 
-        List<Integer> integers = numbers.takeSample(true, 15);
+        List<Integer> integers = javaRDD.takeSample(true, 15);
         System.out.println(Arrays.toString(integers.toArray()));
         sparkContext.close();
     }
@@ -122,7 +122,7 @@ public class JavaActionOperation {
     @Test
     public void sample() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-sample").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
 
         /*
          * false 不可以多次抽样
@@ -135,7 +135,7 @@ public class JavaActionOperation {
          * 每个元素被抽取到的期望次数为2：fraction=2
          * (true, 2) -> result: 1 1 1 2 2 2 8 8 9 9 5 5 6 6 6 6 6 3 3 4
          */
-        JavaRDD<Integer> result = numbers.sample(true, 2);
+        JavaRDD<Integer> result = javaRDD.sample(true, 2);
         result.foreach(x -> System.out.println(x + ""));
         sparkContext.close();
     }
@@ -146,9 +146,9 @@ public class JavaActionOperation {
      */
     @Test
     public void foreach() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-sample").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        numbers.foreach(e -> System.out.println(e + ""));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("sample").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        javaRDD.foreach(e -> System.out.println(e + ""));
         sparkContext.close();
     }
 
@@ -158,10 +158,10 @@ public class JavaActionOperation {
      */
     @Test
     public void saveAsTextFile() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-saveAsTextFile").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("saveAsTextFile").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
         // numbers.saveAsTextFile("htfs://node-1:9000/tmp.txt");
-        numbers.saveAsTextFile("file:///e:/tmp/saveAsTextFile");
+        javaRDD.saveAsTextFile("file:///e:/tmp/saveAsTextFile");
         sparkContext.close();
     }
 
@@ -170,9 +170,9 @@ public class JavaActionOperation {
      */
     @Test
     public void saveAsObjectFile() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-saveAsObjectFile").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        numbers.saveAsObjectFile("file:///e:/tmp/saveAsObjectFile");
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("saveAsObjectFile").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        javaRDD.saveAsObjectFile("file:///e:/tmp/saveAsObjectFile");
         sparkContext.close();
     }
 
@@ -181,9 +181,9 @@ public class JavaActionOperation {
      */
     @Test
     public void takeOrdered() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-takeOrdered").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        List<Integer> result = numbers.takeOrdered(3);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("takeOrdered").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        List<Integer> result = javaRDD.takeOrdered(3);
         System.out.println(Arrays.toString(result.toArray()));
         sparkContext.close();
     }
@@ -193,9 +193,9 @@ public class JavaActionOperation {
      */
     @Test
     public void top() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-top").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        List<Integer> result = numbers.top(5);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("top").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        List<Integer> result = javaRDD.top(5);
         System.out.println(Arrays.toString(result.toArray()));
         sparkContext.close();
     }
@@ -205,7 +205,7 @@ public class JavaActionOperation {
      */
     @Test
     public void countByKey() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-countByKey").setMaster("local[*]"));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("countByKey").setMaster("local[*]"));
         List<Tuple2<String, String>> scoresList = Arrays.asList(
                 new Tuple2<>("class1", "20"),
                 new Tuple2<>("class2", "68"),
@@ -229,9 +229,9 @@ public class JavaActionOperation {
      */
     @Test
     public void fold() {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("action-fold").setMaster("local[*]"));
-        JavaRDD<Integer> numbers = sparkContext.parallelize(numberList);
-        Integer result = numbers.fold(0, (Function2<Integer, Integer, Integer>) (i1, i2) -> i1 + i2);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("fold").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numberList);
+        Integer result = javaRDD.fold(0, (Function2<Integer, Integer, Integer>) Integer::sum);
         System.out.println(result);
         sparkContext.close();
     }
