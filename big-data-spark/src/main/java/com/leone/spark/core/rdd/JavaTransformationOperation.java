@@ -7,9 +7,13 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.*;
 import org.junit.Test;
+import org.spark_project.guava.collect.Lists;
 import scala.Tuple2;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * <p> Transformation （转换/变换）算子
@@ -140,6 +144,29 @@ public class JavaTransformationOperation {
         joinedRDD.foreach(e -> System.err.println(e + ""));
         //System.err.println(joinedRDD.collectAsMap());
 
+        //List<Tuple2<Integer, String>> studentList = Arrays.asList(
+        //        new Tuple2<>(1, "tom"),
+        //        new Tuple2<>(2, "jack"),
+        //        new Tuple2<>(3, "james"),
+        //        new Tuple2<>(4, "andy")
+        //);
+        //
+        //List<Tuple2<Integer, Integer>> scoreList = Arrays.asList(
+        //        new Tuple2<>(1, 100),
+        //        new Tuple2<>(2, 90),
+        //        new Tuple2<>(3, 89),
+        //        new Tuple2<>(4, 97)
+        //);
+        //
+        //// 并行化两个rdd
+        //JavaPairRDD<Integer, String> studentJavaPairRDD = sparkContext.parallelizePairs(studentList);
+        //
+        //JavaPairRDD<Integer, Integer> scoreJavaPairRDD = sparkContext.parallelizePairs(scoreList);
+        //
+        //JavaPairRDD join = studentJavaPairRDD.join(scoreJavaPairRDD);
+        //
+        //join.foreach((VoidFunction<Tuple2<Integer, Tuple2<String, Integer>>>) t -> System.out.println("id: " + t._1 + "\t\tname: " + t._2._1 + "\t\tscore: " + t._2._2));
+
         sparkContext.close();
     }
 
@@ -247,16 +274,13 @@ public class JavaTransformationOperation {
     @Test
     public void mapPartitionsWithIndex() {
         JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("mapPartitionsWithIndex").setMaster("local[*]"));
-        List<Integer> data = Arrays.asList(1, 2, 4, 3, 5, 6, 7, 8, 9, 10);
-        JavaRDD<Integer> javaRDD = sparkContext.parallelize(data, 2);
-        JavaRDD<Integer> coalesce = javaRDD.mapPartitionsWithIndex((Function2<Integer, Iterator<Integer>, Iterator<Integer>>) (integer, integerIterator) -> {
-            int isum = 0;
-            while (integerIterator.hasNext()) {
-                isum += integerIterator.next();
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers, 2);
+        JavaRDD<Integer> coalesce = javaRDD.mapPartitionsWithIndex((Function2<Integer, Iterator<Integer>, Iterator<Integer>>) (integer, partitions) -> {
+            int sum = 0;
+            while (partitions.hasNext()) {
+                sum += partitions.next();
             }
-            LinkedList<Integer> linkedList = new LinkedList<>();
-            linkedList.add(isum);
-            return linkedList.iterator();
+            return Collections.singletonList(sum).iterator();
         }, true);
 
         System.out.println(coalesce.collect());
@@ -286,12 +310,12 @@ public class JavaTransformationOperation {
                 new Tuple2<>(4, 97)
         );
 
-        JavaPairRDD<Integer, String> rdd1 = sparkContext.parallelizePairs(studentList);
+        JavaPairRDD<Integer, String> studentJavaPairRDD = sparkContext.parallelizePairs(studentList);
+        JavaPairRDD<Integer, Integer> scoreJavaPairRDD = sparkContext.parallelizePairs(scoreList);
 
-        JavaPairRDD<Integer, Integer> rdd2 = sparkContext.parallelizePairs(scoreList);
+        JavaPairRDD<Integer, Tuple2<Iterable<String>, Iterable<Integer>>> javaPairRDD = studentJavaPairRDD.cogroup(scoreJavaPairRDD);
 
-        JavaPairRDD<Integer, Tuple2<Iterable<String>, Iterable<Integer>>> result = (JavaPairRDD<Integer, Tuple2<Iterable<String>, Iterable<Integer>>>) rdd1.cogroup(rdd2);
-        System.out.println(result.collect());
+        System.out.println(javaPairRDD.collect());
 
         sparkContext.close();
     }
@@ -301,17 +325,14 @@ public class JavaTransformationOperation {
      */
     @Test
     public void filter() {
-        SparkConf sparkConf = new SparkConf().setAppName("filter").setMaster("local[*]");
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("filter").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers);
 
-        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
-        JavaRDD<Integer> paraNumber = sc.parallelize(numbers);
+        JavaRDD<Integer> filter = javaRDD.filter((Function<Integer, Boolean>) integer -> integer % 2 == 0);
 
-        JavaRDD<Integer> filter = paraNumber.filter((Function<Integer, Boolean>) integer -> integer % 2 == 0);
+        filter.foreach(e -> System.err.println(e + ""));
 
-        filter.foreach(e -> System.out.println(e + ""));
-
-        sc.close();
+        sparkContext.close();
     }
 
     /**
@@ -329,11 +350,11 @@ public class JavaTransformationOperation {
                 new Tuple2<>("class1", 82)
         );
         // 集合并行化
-        JavaPairRDD<String, Integer> score = sc.parallelizePairs(scoresList);
+        JavaPairRDD<String, Integer> scoreJavaPairRDD = sc.parallelizePairs(scoresList);
 
-        JavaPairRDD<String, Iterable<Integer>> groupScore = score.groupByKey();
+        JavaPairRDD<String, Iterable<Integer>> groupScoreJavaPairRDD = scoreJavaPairRDD.groupByKey();
 
-        groupScore.foreach((VoidFunction<Tuple2<String, Iterable<Integer>>>) s -> System.out.println(s + ""));
+        groupScoreJavaPairRDD.foreach((VoidFunction<Tuple2<String, Iterable<Integer>>>) s -> System.out.println(s + ""));
 
         sc.close();
     }
@@ -343,13 +364,13 @@ public class JavaTransformationOperation {
      */
     @Test
     public void sample() {
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("sample").setMaster("local[*]"));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("sample").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(numbers);
 
-        JavaRDD<Integer> rdd = sc.parallelize(numbers);
-        JavaRDD<Integer> sample = rdd.sample(true, 2);
-        System.out.println(sample.collect());
+        JavaRDD<Integer> sample = javaRDD.sample(true, 2);
+        System.err.println(sample.collect());
 
-        sc.close();
+        sparkContext.close();
     }
 
     /**
@@ -357,23 +378,36 @@ public class JavaTransformationOperation {
      */
     @Test
     public void distinct() {
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("distinct").setMaster("local[*]"));
-        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 2, 3, 3, 4, 5, 5, 6, 7));
-        JavaRDD<Integer> distinct = rdd.distinct();
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("distinct").setMaster("local[*]"));
+        JavaRDD<Integer> javaRDD = sparkContext.parallelize(Arrays.asList(1, 2, 2, 3, 3, 4, 5, 5, 6, 7));
+        JavaRDD<Integer> distinct = javaRDD.distinct();
         System.out.println(distinct.collect());
-        sc.close();
+        sparkContext.close();
     }
 
     /**
-     * aggregateByKey 算子 对源RDD进行去重后返回一个新的RDD
+     * aggregate 算子 aggregate先对每个分区的元素做聚集，然后对所有分区的结果做聚集，聚集过程中，使用的是给定的聚集函数以及初始值”zero value”
      */
     @Test
-    public void aggregateByKey() {
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("distinct").setMaster("local[*]"));
-        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 2, 3, 3, 4, 5, 5, 6, 7, 8, 9));
-//        JavaRDD<Integer> distinct = rdd.aggregate(0 new Function2<Integer, Integer, Integer>());
-//        System.out.println(distinct.collect());
-        sc.close();
+    public void aggregate() {
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("aggregateByKey").setMaster("local[*]"));
+        JavaPairRDD<String, Integer> javaPairRDD = sparkContext.parallelizePairs(Lists.newArrayList(
+                new Tuple2<>("cat", 34),
+                new Tuple2<>("cat", 31),
+                new Tuple2<>("dog", 32),
+                new Tuple2<>("tiger", 26)), 2);
+
+
+        Integer result = javaPairRDD.aggregate(0, (Function2<Integer, Tuple2<String, Integer>, Integer>) (v1, v2) -> {
+            System.out.println("seqOp v1: " + v1 + " v2: " + v2);
+            return v1 + v2._2();
+        }, (Function2<Integer, Integer, Integer>) (v1, v2) -> {
+            System.out.println("combOp v1: " + v1 + " v2: " + v2);
+            return v1 + v2;
+        });
+        System.err.println(result);
+
+        sparkContext.close();
     }
 
 
@@ -382,7 +416,7 @@ public class JavaTransformationOperation {
      */
     @Test
     public void reduceByKey() {
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("reduceByKey").setMaster("local[*]"));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("reduceByKey").setMaster("local[*]"));
 
         List<Tuple2<String, Integer>> scoresList = Arrays.asList(
                 new Tuple2<>("class1", 80),
@@ -392,21 +426,22 @@ public class JavaTransformationOperation {
                 new Tuple2<>("class1", 82)
         );
         // 集合并行化
-        JavaPairRDD<String, Integer> score = sc.parallelizePairs(scoresList);
+        JavaPairRDD<String, Integer> scoreJavaPairRDD = sparkContext.parallelizePairs(scoresList);
 
-        JavaPairRDD<String, Integer> pairRDD = score.reduceByKey((Function2<Integer, Integer, Integer>) (v1, v2) -> v1 + v2);
+        JavaPairRDD<String, Integer> pairRDD = scoreJavaPairRDD.reduceByKey((Function2<Integer, Integer, Integer>) Integer::sum);
 
-        pairRDD.foreach((VoidFunction<Tuple2<String, Integer>>) t -> System.out.println(t._1 + " === sum: " + t._2));
+        pairRDD.foreach((VoidFunction<Tuple2<String, Integer>>) t -> System.out.println(t._1 + " --- sum: " + t._2));
 
-        sc.close();
+        sparkContext.close();
     }
 
 
     /**
      * sortByKey 算子：排序
      */
+    @Test
     public void sortByKey() {
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("sortByKey").setMaster("local[*]"));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("sortByKey").setMaster("local[*]"));
         List<Tuple2<Integer, String>> scoresList = Arrays.asList(
                 new Tuple2<>(90, "tom"),
                 new Tuple2<>(68, "jack"),
@@ -414,13 +449,13 @@ public class JavaTransformationOperation {
                 new Tuple2<>(82, "andy")
         );
         // 集合并行化
-        JavaPairRDD<Integer, String> score = sc.parallelizePairs(scoresList);
+        JavaPairRDD<Integer, String> scoreJavaPairRDD = sparkContext.parallelizePairs(scoresList);
 
-        JavaPairRDD<Integer, String> pairRDD = score.sortByKey(false);
+        JavaPairRDD<Integer, String> javaPairRDD = scoreJavaPairRDD.sortByKey(false);
 
-        pairRDD.foreach((VoidFunction<Tuple2<Integer, String>>) t -> System.out.println(t._1 + ":" + t._2));
+        javaPairRDD.foreach((VoidFunction<Tuple2<Integer, String>>) t -> System.err.println(t._1 + " --- " + t._2));
 
-        sc.close();
+        sparkContext.close();
     }
 
     /**
@@ -428,48 +463,13 @@ public class JavaTransformationOperation {
      */
     @Test
     public void pipe() {
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("pipe").setMaster("local[*]"));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("pipe").setMaster("local[*]"));
         List<String> data = Arrays.asList("hi", "hello", "how", "are", "you");
-        sc.parallelize(data)
+        sparkContext.parallelize(data)
                 .pipe("d:\\root\\echo.bat")
                 .collect()
                 .forEach(System.out::println);
-        sc.close();
+        sparkContext.close();
     }
-
-    /**
-     * join 算子：排序
-     */
-    @Test
-    public void join2() {
-
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("join").setMaster("local[*]"));
-
-        List<Tuple2<Integer, String>> studentList = Arrays.asList(
-                new Tuple2<>(1, "tom"),
-                new Tuple2<>(2, "jack"),
-                new Tuple2<>(3, "james"),
-                new Tuple2<>(4, "andy")
-        );
-
-        List<Tuple2<Integer, Integer>> scoreList = Arrays.asList(
-                new Tuple2<>(1, 100),
-                new Tuple2<>(2, 90),
-                new Tuple2<>(3, 89),
-                new Tuple2<>(4, 97)
-        );
-
-        // 并行化两个rdd
-        JavaPairRDD<Integer, String> student = sc.parallelizePairs(studentList);
-
-        JavaPairRDD<Integer, Integer> score = sc.parallelizePairs(scoreList);
-
-        JavaPairRDD join = student.join(score);
-
-        join.foreach((VoidFunction<Tuple2<Integer, Tuple2<String, Integer>>>) t -> System.out.println("id:" + t._1 + "\t\tname:" + t._2._1 + "\t\tscore:" + t._2._2));
-
-        sc.close();
-    }
-
 
 }
