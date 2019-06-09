@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.java.core.examples;
+package com.leone.bigdata.spark.java.core.rdd;
 
 import org.apache.spark.Accumulator;
 import org.apache.spark.SparkConf;
@@ -28,7 +28,7 @@ public class AccumulatorVariable {
 
         JavaRDD<Integer> numberRDD = sc.parallelize(numberList);
 
-        numberRDD.foreach((VoidFunction<Integer>) s -> sum.add(s));
+        numberRDD.foreach((VoidFunction<Integer>) sum::add);
 
         System.out.println(sum.value());
 

@@ -23,7 +23,7 @@ public class JavaWordCount {
 
     public static void main(String[] args) {
         // 创建spark配置
-        SparkConf sparkConf = new SparkConf().setAppName("word-count").setMaster("local[*]");
+        SparkConf sparkConf = new SparkConf().setAppName("word-count")/*.setMaster("local[*]")*/;
 
         // 创建sparkContext
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
@@ -35,7 +35,7 @@ public class JavaWordCount {
         JavaRDD<String> flatMapRDD = javaRDD.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public Iterator<String> call(String s) throws Exception {
-                return Arrays.asList(s.split(",")).iterator();
+                return Arrays.asList(s.split(" ")).iterator();
             }
         });
 

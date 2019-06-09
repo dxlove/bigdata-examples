@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.java.sql.bean;
+package com.leone.bigdata.spark.java.bean;
 
 import java.io.Serializable;
 

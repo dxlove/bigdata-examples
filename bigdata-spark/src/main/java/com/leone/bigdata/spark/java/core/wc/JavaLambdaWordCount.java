@@ -21,7 +21,7 @@ public class JavaLambdaWordCount {
 
     public static void main(String[] args) {
 
-        SparkConf sparkConf = new SparkConf().setAppName("java-lambda-word-count").setMaster("local[*]");
+        SparkConf sparkConf = new SparkConf().setAppName("java-lambda-word-count")/*.setMaster("local[*]")*/;
 
         // 创建 sparkContext
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
@@ -30,7 +30,7 @@ public class JavaLambdaWordCount {
         JavaRDD<String> javaRDD = sparkContext.textFile(args[0]);
 
         // 切分压平
-        JavaRDD<String> flatMapJavaRDD = javaRDD.flatMap((FlatMapFunction<String, String>) line -> Arrays.asList(line.split(",")).iterator());
+        JavaRDD<String> flatMapJavaRDD = javaRDD.flatMap((FlatMapFunction<String, String>) line -> Arrays.asList(line.split(" ")).iterator());
 
         // 将单词组合在一起
         JavaPairRDD<String, Integer> pairJavaRDD = flatMapJavaRDD.mapToPair((PairFunction<String, String, Integer>) word -> new Tuple2<>(word, 1));

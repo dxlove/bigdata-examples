@@ -1,7 +1,8 @@
-package com.leone.common.utils;
+package com.leone.bigdata.common.util;
 
-import com.leone.common.entity.Order;
-import com.leone.common.entity.User;
+import com.leone.bigdata.common.entity.Order;
+import com.leone.bigdata.common.entity.User;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

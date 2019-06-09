@@ -1,6 +1,6 @@
 package com.leone.hbase;
 
-import com.leone.common.utils.RandomValue;
+import com.leone.bigdata.common.util.RandomValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;

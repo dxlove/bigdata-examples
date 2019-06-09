@@ -1,6 +1,6 @@
 package com.leone.bigdata.spark.java.sql;
 
-import com.leone.bigdata.spark.java.sql.bean.Student;
+import com.leone.bigdata.spark.java.bean.Student;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;

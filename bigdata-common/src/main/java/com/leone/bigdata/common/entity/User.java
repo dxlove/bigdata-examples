@@ -1,4 +1,4 @@
-package com.leone.common.entity;
+package com.leone.bigdata.common.entity;
 
 import java.io.Serializable;
 import java.util.Date;

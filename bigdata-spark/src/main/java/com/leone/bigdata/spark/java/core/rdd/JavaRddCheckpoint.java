@@ -16,7 +16,7 @@ import java.util.List;
  * @author leone
  * @since 2019-02-17
  **/
-public class JavaSparkRddCheckpoint {
+public class JavaRddCheckpoint {
 
     public static void main(String[] args) {
         try {
@@ -39,11 +39,11 @@ public class JavaSparkRddCheckpoint {
             // 为pairRDD设置检查点
             javaPairRDD.checkpoint();
 
-            System.err.println("isCheckpointed:" + javaPairRDD.isCheckpointed() + " -- checkpoint:" + javaPairRDD.getCheckpointFile());
+            System.err.println("isCheckpoint: " + javaPairRDD.isCheckpointed() + " -- checkpointFile: " + javaPairRDD.getCheckpointFile());
 
             javaPairRDD.collect();
 
-            System.err.println("isCheckpointed:" + javaPairRDD.isCheckpointed() + " -- checkpoint:" + javaPairRDD.getCheckpointFile());
+            System.err.println("isCheckpoint: " + javaPairRDD.isCheckpointed() + " -- checkpoint: " + javaPairRDD.getCheckpointFile());
 
             sparkContext.close();
         } catch (Exception e) {
