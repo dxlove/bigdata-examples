@@ -9,7 +9,7 @@ import org.apache.spark.sql.streaming.OutputMode
   * @author leone
   * @since 2019-03-28
   **/
-object StructuredNcWordCount {
+object ScalaStructuredNc {
 
   def main(args: Array[String]): Unit = {
 
@@ -19,7 +19,7 @@ object StructuredNcWordCount {
 
     val line = spark.readStream
       .format("socket")
-      .option("host", "39.108.125.41")
+      .option("host", "node-1")
       .option("port", "8000")
       .load()
 

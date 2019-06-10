@@ -5,6 +5,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.streaming.OutputMode;
 import org.apache.spark.sql.streaming.StreamingQuery;
 import org.apache.spark.sql.streaming.StreamingQueryException;
 
@@ -23,7 +24,7 @@ public class StructuredStreamingKafka {
         spark.sparkContext().setLogLevel("warn");
 
         // Create DataSet representing the stream of input lines from kafka
-        Dataset<String> line = spark
+        Dataset<String> kafkaDS = spark
                 .readStream()
                 .format("kafka")
                 .option("kafka.bootstrap.servers", "node-2:9092,node-3:9092,node-4:9092")
@@ -34,13 +35,13 @@ public class StructuredStreamingKafka {
 
         // val kafkaDS: Dataset[(String, String)] = df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)").as[(String, String)]
 
-        line.printSchema();
+        //kafkaDS.printSchema();
 
-        Dataset<Row> wordCounts = line.flatMap((FlatMapFunction<String, String>) x -> Arrays.asList(x.split(" ")).iterator(),
+        Dataset<Row> wordCounts = kafkaDS.flatMap((FlatMapFunction<String, String>) x -> Arrays.asList(x.split(" ")).iterator(),
                 Encoders.STRING()).groupBy("value").count();
 
         StreamingQuery query = wordCounts.writeStream()
-                .outputMode("complete")
+                .outputMode(OutputMode.Complete())
                 .format("console")
                 .start();
 
