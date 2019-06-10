@@ -22,9 +22,9 @@ public class WcMain {
         Configuration conf = new Configuration();
 
         // 设置job运行时要访问的默认文件系统 hdfs 和调度框架 yarn
-        conf.set("fs.defaultFS", "hdfs://node-1:9000");
-        conf.set("mapreduce.framework.name", "yarn");
-        conf.set("yarn.resourcemanager.hostname", "node-1");
+        //conf.set("fs.defaultFS", "hdfs://node-1:9000");
+        //conf.set("mapreduce.framework.name", "yarn");
+        //conf.set("yarn.resourcemanager.hostname", "node-1");
 
         Job job = Job.getInstance();
 

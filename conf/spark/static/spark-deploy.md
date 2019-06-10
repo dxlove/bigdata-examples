@@ -14,5 +14,6 @@
 hdfs dfs -mkdir -p hdfs://node-1:9000/spark/jars
 hdfs dfs -put  $SPARK_HOME/jars/* hdfs://node-1:9000/spark/jars
 
-
+## 解决 MAC WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+export JAVA_LIBRARY_PATH="/usr/local/Cellar/hadoop/2.9.2/lib/native/"
 
