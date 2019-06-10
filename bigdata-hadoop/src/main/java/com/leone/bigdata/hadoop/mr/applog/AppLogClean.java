@@ -1,10 +1,11 @@
 package com.leone.bigdata.hadoop.mr.applog;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -31,8 +32,6 @@ import java.util.Date;
  **/
 public class AppLogClean {
 
-    private static final String HEADER = "header";
-
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static class AppLogCleanMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
@@ -48,6 +47,7 @@ public class AppLogClean {
             v = NullWritable.get();
             sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             mos = new MultipleOutputs<>(context);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
 
         @Override
@@ -55,112 +55,60 @@ public class AppLogClean {
             AppLogBean logBean = objectMapper.readValue(value.toString(), new TypeReference<AppLogBean>() {
             });
 
-            JSONObject jsonObj = JSON.parseObject(value.toString());
-            JSONObject headerObj = jsonObj.getJSONObject(HEADER);
+            AppLogBean.Header header = logBean.getHeader();
+            if (!ObjectUtils.allNotNull(header)) {
+                return;
+            }
+
             /*
              * 过滤缺失必选字段的记录
              */
-            if (StringUtils.isBlank(headerObj.getString("sdk_ver"))) {
+            if (StringUtils.isEmpty(header.getSdk_ver()) || StringUtils.isEmpty(header.getApp_id())) {
                 return;
             }
 
-            if (null == headerObj.getString("time_zone") || "".equals(headerObj.getString("time_zone").trim())) {
+            if (StringUtils.isEmpty(header.getApp_token()) || StringUtils.isEmpty(header.getApp_ver_code())) {
                 return;
             }
 
-            if (null == headerObj.getString("commit_id") || "".equals(headerObj.getString("commit_id").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("commit_time") || "".equals(headerObj.getString("commit_time").trim())) {
+            if (StringUtils.isEmpty(header.getCommit_time()) || StringUtils.isEmpty(header.getCommit_id()) || StringUtils.isEmpty(header.getCid_sn())) {
                 return;
             } else {
                 // 练习时追加的逻辑，替换掉原始数据中的时间戳
-                String commit_time = headerObj.getString("commit_time");
+                String commit_time = header.getCommit_time();
                 String format = sdf.format(new Date(Long.parseLong(commit_time) + 38 * 24 * 60 * 60 * 1000L));
-                headerObj.put("commit_time", format);
+                header.setCommit_time(format);
             }
 
-            if (null == headerObj.getString("pid") || "".equals(headerObj.getString("pid").trim())) {
+            if (StringUtils.isEmpty(header.getPid()) || (StringUtils.isEmpty(header.getDevice_id()) && header.getDevice_id().length() < 17)) {
                 return;
             }
 
-            if (null == headerObj.getString("app_token") || "".equals(headerObj.getString("app_token").trim())) {
+            if (StringUtils.isEmpty(header.getOs_ver()) || StringUtils.isEmpty(header.getOs_name()) || StringUtils.isEmpty(header.getLanguage())) {
                 return;
             }
 
-            if (null == headerObj.getString("app_id") || "".equals(headerObj.getString("app_id").trim())) {
+            if (StringUtils.isEmpty(header.getCountry()) || StringUtils.isEmpty(header.getManufacture()) || StringUtils.isEmpty(header.getDevice_model())) {
                 return;
             }
 
-            if (null == headerObj.getString("device_id") || headerObj.getString("device_id").length() < 17) {
+            if (StringUtils.isEmpty(header.getResolution()) || StringUtils.isEmpty(header.getNet_type())) {
                 return;
             }
 
-            if (null == headerObj.getString("device_id_type") || "".equals(headerObj.getString("device_id_type").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("release_channel") || "".equals(headerObj.getString("release_channel").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("app_ver_name") || "".equals(headerObj.getString("app_ver_name").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("app_ver_code") || "".equals(headerObj.getString("app_ver_code").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("os_name") || "".equals(headerObj.getString("os_name").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("os_ver") || "".equals(headerObj.getString("os_ver").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("language") || "".equals(headerObj.getString("language").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("country") || "".equals(headerObj.getString("country").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("manufacture") || "".equals(headerObj.getString("manufacture").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("device_model") || "".equals(headerObj.getString("device_model").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("resolution") || "".equals(headerObj.getString("resolution").trim())) {
-                return;
-            }
-
-            if (null == headerObj.getString("net_type") || "".equals(headerObj.getString("net_type").trim())) {
-                return;
-            }
-
-            // 生成user_id
             String user_id;
-            if ("android".equals(headerObj.getString("os_name").trim())) {
-                user_id = StringUtils.isNotBlank(headerObj.getString("android_id")) ? headerObj.getString("android_id")
-                        : headerObj.getString("device_id");
+            if ("android".equals(header.getOs_name())) {
+                user_id = StringUtils.isNotBlank(header.getAndroid_id()) ? header.getAndroid_id() : header.getDevice_id();
             } else {
-                user_id = headerObj.getString("device_id");
+                user_id = header.getDevice_id();
             }
 
             // 输出结果
-            headerObj.put("user_id", user_id);
-            k.set(JsonToStringUtil.toString(headerObj));
-
-            if ("android".equals(headerObj.getString("os_name"))) {
+            header.setUser_id(user_id);
+            k.set(header.toString());
+            if ("android".equals(header.getOs_name())) {
                 mos.write(k, v, "android/android");
-            } else {
+            } else if ("ios".equals(header.getOs_name())) {
                 mos.write(k, v, "ios/ios");
             }
         }
@@ -174,22 +122,21 @@ public class AppLogClean {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf);
+        Job job = Job.getInstance();
         job.setJobName("app-log");
         job.setJarByClass(AppLogClean.class);
-
         job.setMapperClass(AppLogCleanMapper.class);
-
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
-
         job.setNumReduceTasks(0);
 
         // 避免生成默认的part-m-00000等文件，因为，数据已经交给MultipleOutputs输出了
         LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
+        // 输入路径
         FileInputFormat.setInputPaths(job, new Path(args[0]));
 
+        // 输出路径
         Path outputPath = new Path(args[1]);
         FileSystem fileSystem = outputPath.getFileSystem(conf);
         if (fileSystem.exists(outputPath)) {
@@ -197,8 +144,7 @@ public class AppLogClean {
         }
         FileOutputFormat.setOutputPath(job, outputPath);
 
-        boolean res = job.waitForCompletion(true);
-        System.exit(res ? 0 : 1);
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 
 }
