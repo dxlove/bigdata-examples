@@ -27,7 +27,7 @@ public class JavaSparkStreamingKafka {
 
     public static void main(String[] args) throws InterruptedException {
         // 创建SparkConf对象
-        SparkConf conf = new SparkConf().setAppName("KafkaDirectWordCount").setMaster("local[*]");
+        SparkConf conf = new SparkConf().setAppName("KafkaDirectWordCount")/*.setMaster("local[*]")*/;
 
         // 创建JavaStreamingContext对象
         JavaStreamingContext jsc = new JavaStreamingContext(conf, Durations.seconds(5));
@@ -46,7 +46,7 @@ public class JavaSparkStreamingKafka {
         kafkaParams.put("auto.offset.reset", "latest");
 
         // 创建Kafka的topics ，里面可以填多个topic
-        Collection<String> topics = Collections.singletonList("streaming-topic");
+        Collection<String> topics = Collections.singletonList("topic-spark-streaming");
 
         // 创建DStream
         JavaInputDStream<ConsumerRecord<Object, Object>> lines = KafkaUtils.createDirectStream(jsc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topics, kafkaParams));
@@ -58,7 +58,7 @@ public class JavaSparkStreamingKafka {
         JavaPairDStream<String, Integer> word = linesSplit.mapToPair((PairFunction<String, String, Integer>) everyWord -> new Tuple2<>(everyWord, 1));
 
         // 进行reduce聚合操作
-        JavaPairDStream<String, Integer> wordsCount = word.reduceByKey((Function2<Integer, Integer, Integer>) (v1, v2) -> v1 + v2);
+        JavaPairDStream<String, Integer> wordsCount = word.reduceByKey((Function2<Integer, Integer, Integer>) Integer::sum);
 
         // 打印输出结构
         wordsCount.print();

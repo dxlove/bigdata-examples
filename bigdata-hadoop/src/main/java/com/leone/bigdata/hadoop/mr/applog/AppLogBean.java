@@ -298,4 +298,43 @@ public class AppLogBean implements Serializable {
     public void setUser_id(String user_id) {
         this.user_id = user_id;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AppLogBean{");
+        sb.append("sdk_ver='").append(sdk_ver).append('\'');
+        sb.append(", time_zone='").append(time_zone).append('\'');
+        sb.append(", commit_id='").append(commit_id).append('\'');
+        sb.append(", commit_time='").append(commit_time).append('\'');
+        sb.append(", pid='").append(pid).append('\'');
+        sb.append(", app_token='").append(app_token).append('\'');
+        sb.append(", app_id='").append(app_id).append('\'');
+        sb.append(", device_id='").append(device_id).append('\'');
+        sb.append(", device_id_type='").append(device_id_type).append('\'');
+        sb.append(", release_channel='").append(release_channel).append('\'');
+        sb.append(", app_ver_name='").append(app_ver_name).append('\'');
+        sb.append(", app_ver_code='").append(app_ver_code).append('\'');
+        sb.append(", os_name='").append(os_name).append('\'');
+        sb.append(", os_ver='").append(os_ver).append('\'');
+        sb.append(", language='").append(language).append('\'');
+        sb.append(", country='").append(country).append('\'');
+        sb.append(", manufacture='").append(manufacture).append('\'');
+        sb.append(", device_model='").append(device_model).append('\'');
+        sb.append(", resolution='").append(resolution).append('\'');
+        sb.append(", net_type='").append(net_type).append('\'');
+        sb.append(", account='").append(account).append('\'');
+        sb.append(", app_device_id='").append(app_device_id).append('\'');
+        sb.append(", mac='").append(mac).append('\'');
+        sb.append(", android_id='").append(android_id).append('\'');
+        sb.append(", imei='").append(imei).append('\'');
+        sb.append(", cid_sn='").append(cid_sn).append('\'');
+        sb.append(", build_num='").append(build_num).append('\'');
+        sb.append(", mobile_data_type='").append(mobile_data_type).append('\'');
+        sb.append(", promotion_channel='").append(promotion_channel).append('\'');
+        sb.append(", carrier='").append(carrier).append('\'');
+        sb.append(", city='").append(city).append('\'');
+        sb.append(", user_id='").append(user_id).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

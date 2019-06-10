@@ -22,7 +22,7 @@ import java.util.Arrays;
 public class JavaSparkStreamingNc {
 
     public static void main(String[] args) throws InterruptedException {
-        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("streaming");
+        SparkConf conf = new SparkConf().setAppName("streaming").setMaster("local[*]");
 
         JavaStreamingContext jsc = new JavaStreamingContext(conf, Seconds.apply(5));
 
@@ -35,7 +35,7 @@ public class JavaSparkStreamingNc {
         JavaPairDStream<Object, Integer> pairWords = words.mapToPair((PairFunction<String, Object, Integer>) s -> new Tuple2<>(s, 1));
 
         // 进行reduce聚合操作
-        JavaPairDStream<Object, Integer> result = pairWords.reduceByKey((Function2<Integer, Integer, Integer>) (integer, integer2) -> integer + integer2);
+        JavaPairDStream<Object, Integer> result = pairWords.reduceByKey((Function2<Integer, Integer, Integer>) Integer::sum);
 
         // 打印输出结构
         result.print();

@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author leone
  * @since 2019-03-29
  **/
-public class StructuredStreamingWithNc {
+public class StructuredStreamingNc {
 
     public static void main(String[] args) throws StreamingQueryException {
         SparkSession spark = SparkSession.builder().appName("structured").master("local[*]").getOrCreate();

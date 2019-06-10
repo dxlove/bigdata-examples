@@ -16,10 +16,10 @@ import java.util.Arrays;
  * @author leone
  * @since 2019-04-02
  **/
-public class StructuredStreamingWithKafka {
+public class StructuredStreamingKafka {
 
     public static void main(String[] args) throws StreamingQueryException {
-        SparkSession spark = SparkSession.builder().master("local[*]").appName("structured").getOrCreate();
+        SparkSession spark = SparkSession.builder().appName("structured").master("local[*]").getOrCreate();
         spark.sparkContext().setLogLevel("warn");
 
         // Create DataSet representing the stream of input lines from kafka
@@ -27,7 +27,7 @@ public class StructuredStreamingWithKafka {
                 .readStream()
                 .format("kafka")
                 .option("kafka.bootstrap.servers", "node-2:9092,node-3:9092,node-4:9092")
-                .option("subscribe", "structured-topic")
+                .option("subscribe", "topic-spark-structured")
                 .load()
                 .selectExpr("CAST(value AS STRING)")
                 .as(Encoders.STRING());
@@ -45,7 +45,6 @@ public class StructuredStreamingWithKafka {
                 .start();
 
         query.awaitTermination();
-
     }
 
 }

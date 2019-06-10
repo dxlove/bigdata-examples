@@ -18,8 +18,8 @@ object HiveOnSpark {
       .enableHiveSupport()
       .getOrCreate()
 
-    //    val result = spark.sql("select * from t_boy order by fv desc")
-    //    result.show()
+    //val result = spark.sql("select * from t_boy order by fv desc")
+    //result.show()
 
     val result: DataFrame = spark.sql("create table t_test(id bigint, name string)")
     result.show()
