@@ -2,15 +2,12 @@ package com.leone.bigdata.flink.wc;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
-import org.junit.Test;
 
 /**
  * <p>
@@ -24,7 +21,7 @@ public class FlinkJavaWc {
      * 从本地文件读取字符串，按空格分割单词，统计每个分词出现的次数并输出
      */
     public static void main(String[] args) throws Exception {
-        // 获取输入参数
+        // 获取输入参数--port 8888 --host node-1
         int port;
         String host;
         try {
@@ -33,7 +30,7 @@ public class FlinkJavaWc {
             host = params.get("host");
         } catch (Exception e) {
             System.err.println("not param port or host used default node-1:8081");
-            port = 8081;
+            port = 8888;
             host = "node-1";
         }
 
@@ -44,7 +41,7 @@ public class FlinkJavaWc {
         SingleOutputStreamOperator<WordWithCount> wc = text.flatMap(new FlatMapFunction<String, WordWithCount>() {
             @Override
             public void flatMap(String s, Collector<WordWithCount> collector) throws Exception {
-                String[] words = s.split("\\s");
+                String[] words = s.split(" ");
                 for (String str : words) {
                     collector.collect(new WordWithCount(str, 1));
                 }
@@ -96,25 +93,6 @@ public class FlinkJavaWc {
                     ", count=" + count +
                     '}';
         }
-    }
-
-    @Test
-    public void javaWordCount() throws Exception {
-        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        DataStream<String> text = env.socketTextStream("node-1", 8888);
-        DataStream<Tuple2<String, Integer>> dataStream = text.flatMap(new FlatMapFunction<String, Tuple2<String, Integer>>() {
-            @Override
-            public void flatMap(String s, Collector<Tuple2<String, Integer>> collector) throws Exception {
-                String[] tokens = s.toLowerCase().split(" ");
-                for (String token : tokens) {
-                    if (token.length() > 0) {
-                        collector.collect(new Tuple2<>(token, 1));
-                    }
-                }
-            }
-        }).keyBy(0).timeWindow(Time.seconds(2), Time.seconds(1)).sum(1).setParallelism(1);
-        dataStream.print();
-        env.execute("Java WordCount from SocketTextStream Example");
     }
 
 }

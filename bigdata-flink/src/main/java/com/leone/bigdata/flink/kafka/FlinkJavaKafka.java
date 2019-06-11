@@ -22,12 +22,11 @@ public class FlinkJavaKafka {
 
     private static final String KAFKA_BROKER = "node-2:9092,node-3:9092,node-4:9092";
 
-    private static final String GROUP = "test-group";
+    private static final String GROUP_NAME = "group-flink";
 
-    private static final String TOPIC_NAME = "flink-topic";
+    private static final String TOPIC_NAME = "topic-flink";
 
     public static void main(String[] args) throws Exception {
-
         // get env
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -36,7 +35,7 @@ public class FlinkJavaKafka {
         Properties kafkaProps = new Properties();
         kafkaProps.setProperty("zookeeper.connect", ZOOKEEPER_HOST);
         kafkaProps.setProperty("bootstrap.servers", KAFKA_BROKER);
-        kafkaProps.setProperty("group.id", GROUP);
+        kafkaProps.setProperty("group.id", GROUP_NAME);
 
         FlinkKafkaConsumer010<String> kafkaConsumer = new FlinkKafkaConsumer010<>(TOPIC_NAME, new SimpleStringSchema(), kafkaProps);
 
@@ -46,13 +45,10 @@ public class FlinkJavaKafka {
 
         counts.print();
 
-        env.execute();
-
+        env.execute("flink-kafka");
     }
 
     public static final class LineSplitter implements FlatMapFunction<String, Tuple2<String, Integer>> {
-        private static final long serialVersionUID = 1L;
-
         public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
             String[] tokens = value.split(" ");
             for (String token : tokens) {

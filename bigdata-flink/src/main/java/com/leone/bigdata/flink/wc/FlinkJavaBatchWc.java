@@ -16,17 +16,13 @@ import org.apache.flink.util.Collector;
 public class FlinkJavaBatchWc {
 
     public static void main(String[] args) throws Exception {
-
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
-        DataSource<String> dataSource = env.readTextFile("file:///root/logs/common/");
+        DataSource<String> dataSource = env.readTextFile(args[0]);
 
         DataSet<Tuple2<String, Integer>> sum = dataSource.flatMap(new Tokenizer()).groupBy(0).sum(1).setParallelism(1);
-
-        sum.writeAsCsv("file:///root/output/flink/result.txt", "\n", ",");
+        sum.writeAsCsv(args[1], "\n", ",");
 
         env.execute("batch-wc");
-
     }
 
     public static class Tokenizer implements FlatMapFunction<String, Tuple2<String, Integer>> {
@@ -40,6 +36,5 @@ public class FlinkJavaBatchWc {
             }
         }
     }
-
 
 }
