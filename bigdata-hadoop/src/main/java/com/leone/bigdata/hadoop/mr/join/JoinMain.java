@@ -97,7 +97,7 @@ public class JoinMain {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         Configuration conf = new Configuration();
-        if (args.length < 1) {
+        if (args.length != 2) {
             System.err.println("please set process arguments!");
         }
 

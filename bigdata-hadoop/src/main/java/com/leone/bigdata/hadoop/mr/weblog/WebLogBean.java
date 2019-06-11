@@ -1,4 +1,4 @@
-package com.leone.bigdata.hadoop.mr.log;
+package com.leone.bigdata.hadoop.mr.weblog;
 
 /**
  * <p>

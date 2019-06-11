@@ -1,4 +1,4 @@
-package com.leone.bigdata.hadoop.mr.log;
+package com.leone.bigdata.hadoop.mr.weblog;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;

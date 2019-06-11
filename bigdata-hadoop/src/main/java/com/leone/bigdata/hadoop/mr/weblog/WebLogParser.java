@@ -1,10 +1,16 @@
-package com.leone.bigdata.hadoop.mr.log;
+package com.leone.bigdata.hadoop.mr.weblog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * <p>
+ *
+ * @author leone
+ * @since 2019-02-11
+ **/
 public class WebLogParser {
 
     static SimpleDateFormat sd1 = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss", Locale.US);

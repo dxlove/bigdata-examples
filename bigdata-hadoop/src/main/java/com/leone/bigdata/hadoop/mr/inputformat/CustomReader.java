@@ -14,6 +14,12 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 import java.io.IOException;
 
+/**
+ * <p>
+ *
+ * @author leone
+ * @since 2018-06-11
+ **/
 public class CustomReader extends RecordReader<NullWritable, BytesWritable> {
 
     private FileSplit fileSplit;
