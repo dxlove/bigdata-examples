@@ -98,13 +98,15 @@ public class AppLogClean {
 
             String user_id;
             if ("android".equals(header.getOs_name())) {
-                user_id = StringUtils.isNotBlank(header.getAndroid_id()) ? header.getAndroid_id() : header.getDevice_id();
+                user_id = StringUtils.isEmpty(header.getAndroid_id()) ? header.getAndroid_id() : header.getDevice_id();
             } else {
                 user_id = header.getDevice_id();
             }
-
             // 输出结果
             header.setUser_id(user_id);
+            if (header.getUser_id().equals("m.e4:c7:63:a7:d3:30")) {
+                System.err.println(header.toString());
+            }
             k.set(header.toString());
             if ("android".equals(header.getOs_name())) {
                 mos.write(k, v, "android/android");

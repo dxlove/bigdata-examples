@@ -137,6 +137,7 @@
     </dependencies>
 
     <build>
+        <finalName>spark-wc</finalName>
         <plugins>
             <!-- scala 编译插件 -->
             <plugin>
