@@ -104,9 +104,6 @@ public class AppLogClean {
             }
             // 输出结果
             header.setUser_id(user_id);
-            if (header.getUser_id().equals("m.e4:c7:63:a7:d3:30")) {
-                System.err.println(header.toString());
-            }
             k.set(header.toString());
             if ("android".equals(header.getOs_name())) {
                 mos.write(k, v, "android/android");

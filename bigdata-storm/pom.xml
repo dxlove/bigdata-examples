@@ -116,7 +116,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.leone.storm.log.CallLogMain</mainClass>
+                            <mainClass>com.leone.bigdata.storm.log.CallLogMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
