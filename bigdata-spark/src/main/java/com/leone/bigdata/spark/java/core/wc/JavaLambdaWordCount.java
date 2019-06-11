@@ -21,7 +21,7 @@ public class JavaLambdaWordCount {
 
     public static void main(String[] args) {
 
-        SparkConf sparkConf = new SparkConf().setAppName("java-lambda-word-count")/*.setMaster("local[*]")*/;
+        SparkConf sparkConf = new SparkConf().setAppName("java-lambda-word-count").setMaster("local[*]");
 
         // 创建 sparkContext
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
