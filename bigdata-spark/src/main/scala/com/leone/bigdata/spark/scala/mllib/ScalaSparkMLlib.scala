@@ -11,7 +11,7 @@ import org.apache.spark.sql.SparkSession
   * @author leone
   * @since 2019-01-14
   **/
-object ScalaSparkMLTest {
+object ScalaSparkMLlib {
 
   def main(args: Array[String]) {
     val spark = SparkSession.builder().appName("sql").master("local[*]").getOrCreate()

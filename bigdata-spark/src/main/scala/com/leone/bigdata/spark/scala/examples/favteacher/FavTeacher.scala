@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.core.examples.favteacher
+package com.leone.bigdata.spark.scala.examples.favteacher
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}

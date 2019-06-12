@@ -9,7 +9,7 @@ import scalikejdbc.{DB, SQL}
   * @author leone
   * @since 2019-03-09
   **/
-object ScalaJdbcTest {
+object ScalaJdbc {
 
   def main(args: Array[String]): Unit = {
 

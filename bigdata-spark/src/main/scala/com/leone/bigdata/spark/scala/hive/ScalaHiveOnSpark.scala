@@ -8,7 +8,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
   * @author leone
   * @since 2019-01-08
   **/
-object HiveOnSpark {
+object ScalaHiveOnSpark {
 
   def main(args: Array[String]): Unit = {
 

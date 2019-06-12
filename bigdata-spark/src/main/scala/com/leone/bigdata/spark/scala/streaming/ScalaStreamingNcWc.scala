@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   * @author leone
   * @since 2018-12-24
   **/
-object NcWordCount {
+object ScalaStreamingNcWc {
 
   def main(args: Array[String]): Unit = {
 

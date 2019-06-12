@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.sql.examples
+package com.leone.bigdata.spark.scala.examples.ip
 
 import org.apache.spark.sql.{Dataset, SparkSession}
 

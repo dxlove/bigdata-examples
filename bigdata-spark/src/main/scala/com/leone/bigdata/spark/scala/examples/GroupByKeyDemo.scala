@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.core.examples
+package com.leone.bigdata.spark.scala.examples
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}

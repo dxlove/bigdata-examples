@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.core.examples.ip
+package com.leone.bigdata.spark.scala.examples.ip
 
 import scala.io.{BufferedSource, Source}
 

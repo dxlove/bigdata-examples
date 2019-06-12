@@ -12,7 +12,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
   * @author leone
   * @since 2018-12-24
   **/
-object KafkaWordCount {
+object ScalaStreamingKafkaWc {
 
   def main(args: Array[String]): Unit = {
 
