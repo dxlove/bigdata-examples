@@ -2,7 +2,7 @@ package com.leone.bigdata.spark.scala.sql.spark1
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -11,7 +11,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   * @author leone
   * @since 2018-12-20
   **/
-object SparkSql1xDemo3 {
+object ScalaDataFrameSchema {
 
   def main(args: Array[String]): Unit = {
 
@@ -29,6 +29,7 @@ object SparkSql1xDemo3 {
       val name = fields(1)
       val age = fields(2).toInt
       val fv = line(3).toDouble
+      println(id, name, age, fv)
       Row(id, name, age, fv)
     })
 
@@ -39,14 +40,13 @@ object SparkSql1xDemo3 {
       StructField("fv", DoubleType, true)
     ))
 
-    import sqlContext.implicits._
-
     val df = sqlContext.createDataFrame(rowRDD, schema)
+    df.registerTempTable("t_person")
+    sqlContext.sql("select * from t_person order by fv desc, age asc").show()
 
+    import sqlContext.implicits._
     val df1 = df.select("name", "age", "fv")
-    val df2 = df1.orderBy($"fv" desc, $"age" asc)
-
-    df2.show()
+    df1.orderBy($"fv" desc, $"age" asc).show()
 
     sc.stop()
   }

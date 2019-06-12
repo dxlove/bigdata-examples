@@ -11,10 +11,7 @@ import org.apache.spark.sql.SparkSession
 object SparkSqlDataTransition {
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder()
-      .appName("SparkSqlDataTransition")
-      .master("local[*]")
-      .getOrCreate()
+    val spark = SparkSession.builder().appName("SparkSqlDataTransition").master("local[*]").getOrCreate()
 
     val dataFrame = spark.read.json("file:///d:/root/logs/json/")
     // val dataFrame = spark.read.parquet("file:///d:/root/logs/parquet/")
@@ -23,7 +20,6 @@ object SparkSqlDataTransition {
     // val dataFrame = spark.read.orc("file:///d:/root/logs/orc/")
 
     dataFrame.show(10)
-
     dataFrame.printSchema()
 
     dataFrame.write.parquet("file:///d:/root/output/parquet/")

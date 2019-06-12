@@ -17,7 +17,6 @@ object BasicOperation {
 
     val dataFrame = spark.read.format("json").load("file:///root/logs/json")
 
-
     println(dataFrame.count())
     dataFrame.cache()
 

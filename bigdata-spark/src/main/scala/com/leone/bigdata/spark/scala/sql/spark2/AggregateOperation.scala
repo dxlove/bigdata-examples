@@ -11,15 +11,15 @@ import org.apache.spark.sql.SparkSession
 object AggregateOperation {
 
   def main(args: Array[String]): Unit = {
-
     val spark = SparkSession.builder().appName("AggregateOperation").master("local[*]").getOrCreate()
 
     import org.apache.spark.sql.functions._
     import spark.implicits._
 
-    // 加载两份数据型成两个dataframe
+    // 加载两份数据型成两个dataFrame
     val department = spark.read.json("file:///root/logs/join/department.json")
     val employee = spark.read.json("file:///root/logs/join/employee.json")
+
 
     employee.join(department, $"depId" === $"id")
       .groupBy(department("name"))
@@ -32,7 +32,6 @@ object AggregateOperation {
         .foreach(println)
 
     spark.stop()
-
   }
 
 }

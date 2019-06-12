@@ -17,9 +17,9 @@ object UntypedOperation {
     import org.apache.spark.sql.functions._
     import spark.implicits._
 
-    // 加载两份数据型成两个dataframe
-    val department = spark.read.json("file:///root/logs/join/department.json")
-    val employee = spark.read.json("file:///root/logs/join/employee.json")
+    // 加载两份数据型成两个dataFrame
+    val department = spark.read.json(args(0))
+    val employee = spark.read.json(args(1))
 
     // 进行计算操作
 
@@ -37,7 +37,6 @@ object UntypedOperation {
     employee.select($"name", $"gender", $"salary").where("age>30").show()
 
     spark.stop()
-
   }
 
 }
