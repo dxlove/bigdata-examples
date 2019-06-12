@@ -10,7 +10,7 @@ import java.util.Properties;
  * @author leone
  * @since 2019-03-20
  **/
-public class JavaSparkSave {
+public class JavaSparkSaveToFs {
 
 
     public static void main(String[] args) throws AnalysisException {

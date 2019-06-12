@@ -25,26 +25,21 @@ import java.util.Map;
  * @author leone
  * @since 2019-01-14
  **/
-public class SparkMlLibTest {
+public class JavaSparkMlLib {
 
     public static void main(String[] args) {
-
         SparkSession spark = SparkSession.builder().master("local[5]").appName("DecisionTreeTest").getOrCreate();
         JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
 
-        JavaRDD<String> lines = jsc.textFile("file:///root/tree.txt");
-
+        JavaRDD<String> lines = jsc.textFile(args[1]);
         final HashingTF tf = new HashingTF(10000);
 
-        JavaRDD<LabeledPoint> transdata = lines.map(new Function<String, LabeledPoint>() {
-            private static final long serialVersionUID = 1L;
-
+        JavaRDD<LabeledPoint> transData = lines.map(new Function<String, LabeledPoint>() {
             @Override
             public LabeledPoint call(String str) throws Exception {
                 String[] t1 = str.split(",");
                 String[] t2 = t1[1].split(" ");
-                LabeledPoint lab = new LabeledPoint(Double.parseDouble(t1[0]), tf.transform(Arrays.asList(t2)));
-                return lab;
+                return new LabeledPoint(Double.parseDouble(t1[0]), tf.transform(Arrays.asList(t2)));
             }
         });
 
@@ -55,19 +50,17 @@ public class SparkMlLibTest {
         String impurity = "gini";
         Integer maxDepth = 5;
         Integer maxBins = 32;
-        final DecisionTreeModel tree_model = DecisionTree.trainClassifier(transdata, numClasses,
+        final DecisionTreeModel tree_model = DecisionTree.trainClassifier(transData, numClasses,
                 categoricalFeaturesInfo, impurity, maxDepth, maxBins);
 
         System.out.println("决策树模型：" + tree_model.toDebugString());
 
         // 保存模型
-        tree_model.save(jsc.sc(), "file:///root/DecisionTreeModel");
+        tree_model.save(jsc.sc(), args[2]);
 
         // 未处理数据，带入模型处理
-        JavaRDD<String> testLines = jsc.textFile("file:///root/tree1.txt");
+        JavaRDD<String> testLines = jsc.textFile(args[3]);
         JavaPairRDD<String, String> res = testLines.mapToPair(new PairFunction<String, String, String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public Tuple2<String, String> call(String line) throws Exception {
                 String[] t2 = line.split(",")[1].split(" ");
@@ -79,8 +72,6 @@ public class SparkMlLibTest {
 
         // 打印结果
         res.foreach(new VoidFunction<Tuple2<String, String>>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void call(Tuple2<String, String> a) throws Exception {
                 System.out.println(a._1 + " : " + a._2);
@@ -88,8 +79,7 @@ public class SparkMlLibTest {
         });
 
         // 将结果保存在本地
-        res.saveAsTextFile("file:///root/result.txt");
-
+        res.saveAsTextFile(args[4]);
         spark.stop();
     }
 

@@ -14,7 +14,6 @@ public class JavaDataFrameCreate {
 
     public static void main(String[] args) {
         SparkSession spark = SparkSession.builder().master("local[*]").appName("dataFrame").getOrCreate();
-
         Dataset<Row> json = spark.read().json("file:///root/logs/json/");
 
         // 等于sql中查询所有

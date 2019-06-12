@@ -30,7 +30,6 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
-<!--            <scope>provided</scope>-->
         </dependency>
 
         <!-- 导入 spark core 依赖 -->
@@ -38,7 +37,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.11</artifactId>
             <version>${spark.version}</version>
-<!--            <scope>provided</scope>-->
         </dependency>
 
         <!-- spark sql 依赖 -->
@@ -46,7 +44,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark streaming 依赖-->
@@ -54,7 +51,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Spark MLlib依赖 -->
@@ -62,7 +58,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark 整合hive的依赖 -->
@@ -70,7 +65,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark 整合kafka-->
@@ -85,7 +79,6 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
             <version>${hadoop.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--mysql 依赖-->
@@ -93,7 +86,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.47</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--hive的依赖-->
@@ -101,7 +93,6 @@
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-jdbc</artifactId>
             <version>1.2.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- scala连接数据库-->
@@ -124,7 +115,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark structured 整合 kafka 依赖-->
