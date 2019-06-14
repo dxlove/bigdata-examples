@@ -1,6 +1,7 @@
 package com.leone.bigdata.scala.redis
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
+import redis.clients.jedis.params.SetParams
 import redis.clients.jedis.util.Pool
 import redis.clients.jedis.{Jedis, JedisPool}
 
@@ -16,13 +17,14 @@ object RedisClient {
 
   def main(args: Array[String]): Unit = {
     init("39.108.125.41", 6379, 1000, "1DF2D35543FE", 2)
-//    val str = set("hello", "hello world")
-//    println(str)
+    val map = new java.util.HashMap[String, String]
+    map.put("name", "1")
+    map.put("age", "2")
+    map.put("me", "3")
 
-//    val res = get("hello")
-//    println(res)
+    set("leone", map)
 
-    println(del("hello"))
+    println(hGet("leone"))
 
   }
 
@@ -63,6 +65,19 @@ object RedisClient {
   }
 
   /**
+    * 根据 key 获取 value
+    *
+    * @param key
+    * @return
+    */
+  def hGet(key: String): java.util.Map[String, String] = {
+    val jedis = getResource
+    val result = jedis.hgetAll(key)
+    returnResource(jedis)
+    result
+  }
+
+  /**
     * 保存 k v
     *
     * @param key
@@ -82,14 +97,44 @@ object RedisClient {
     * @param key
     * @param value
     * @param unixTime
-    * @return
+    * @return OK
     */
-  def set(key: String, value: String, unixTime: Long): String = {
+  def set(key: String, value: String, unixTime: Int): String = {
     val jedis = getResource
-    val result = jedis.set(key, value)
-    jedis.expireAt(key, unixTime)
+    // NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒
+    val result = jedis.set(key, value, SetParams.setParams().ex(unixTime))
     returnResource(jedis)
     result
+  }
+
+  /**
+    * 设置hash类型
+    *
+    * @param key
+    * @param value
+    * @return
+    */
+  def set(key: String, value: java.util.Map[String, String]): Long = {
+    val jedis = getResource
+    val long = jedis.hset(key, value)
+    returnResource(jedis)
+    long
+  }
+
+  /**
+    * 设置hash类型并设置过期时间
+    *
+    * @param key
+    * @param value
+    * @param unixTime
+    * @return
+    */
+  def set(key: String, value: java.util.Map[String, String], unixTime: Int): Long = {
+    val jedis = getResource
+    val long = jedis.hset(key, value)
+    jedis.expireAt(key, unixTime)
+    returnResource(jedis)
+    long
   }
 
   /**
@@ -105,7 +150,6 @@ object RedisClient {
     long
   }
 
-
   /**
     * 释放资源
     *
@@ -116,6 +160,5 @@ object RedisClient {
       jedis.close()
     }
   }
-
 
 }
