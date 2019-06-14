@@ -1,7 +1,7 @@
-package com.leone.bigdata.spark.scala.examples
+package com.leone.bigdata.spark.scala.examples.calllog
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 /**
@@ -10,13 +10,11 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
   * @author leone
   * @since 2019-02-18
   **/
-object CallLogDemo {
+object CallLogMain {
 
   def main(args: Array[String]): Unit = {
-
     val session = SparkSession.builder().appName("call-log").master("local[*]").getOrCreate()
-
-    val rdd = session.sparkContext.textFile("e:/tmp/logs/web-20190218-11.txt")
+    val rdd = session.sparkContext.textFile(args(0))
 
     // 1550480943879	34:E4:82:E3:E1:75	15939879106	https://www.centos.org/	PC	182.83.205.68	81	3820
     val rows: RDD[Row] = rdd.map(line => {

@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.java.core.examples.nginxAccessLog;
+package com.leone.bigdata.spark.java.examples.nginxAccessLog;
 
 import com.leone.bigdata.spark.java.util.CommonUtil;
 import org.apache.spark.api.java.JavaRDD;

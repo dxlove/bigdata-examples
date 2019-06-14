@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.java.core.rdd;
+package com.leone.bigdata.spark.java.core;
 
 import org.apache.spark.Accumulator;
 import org.apache.spark.SparkConf;

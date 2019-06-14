@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.java.core.examples;
+package com.leone.bigdata.spark.java.examples;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
