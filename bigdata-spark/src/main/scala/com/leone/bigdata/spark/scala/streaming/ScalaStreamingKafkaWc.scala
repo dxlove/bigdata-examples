@@ -26,8 +26,8 @@ object ScalaStreamingKafkaWc {
     ssc.checkpoint(checkpointPath)
 
     val bootstrapServers = "node-2:9092,node-3:9092,node-4:9092"
-    val groupId = "streaming-group"
-    val topicName = "streaming-topic"
+    val groupId = "group-streaming"
+    val topicName = "topic-streaming"
     val maxPoll = 20000
 
     val kafkaParams = Map(
@@ -38,10 +38,11 @@ object ScalaStreamingKafkaWc {
       ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer]
     )
 
-    val DStream = KafkaUtils.createDirectStream(ssc, LocationStrategies.PreferConsistent,
+    val directStream = KafkaUtils.createDirectStream(ssc,
+      LocationStrategies.PreferConsistent,
       ConsumerStrategies.Subscribe[String, String](Set(topicName), kafkaParams))
 
-    DStream.map(_.value)
+    directStream.map(_.value)
       .flatMap(_.split(" "))
       .map(x => (x, 1L))
       .reduceByKey(_ + _)
@@ -51,7 +52,6 @@ object ScalaStreamingKafkaWc {
 
     ssc.start()
     ssc.awaitTermination()
-
   }
 
 }

@@ -10,7 +10,6 @@ import org.apache.spark.{SparkConf, SparkContext}
   **/
 object ScalaActionOperation {
 
-
   val numberArray = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
   def main(args: Array[String]): Unit = {

@@ -2,10 +2,12 @@ package com.leone.bigdata.spark.scala.examples.monitor
 
 import com.typesafe.config.ConfigFactory
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
-import org.apache.spark.streaming.kafka010.{ConsumerStrategies, KafkaUtils, LocationStrategies}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import scalikejdbc.config.DBs
 import scalikejdbc.{DB, SQL}
@@ -17,7 +19,6 @@ import scalikejdbc.{DB, SQL}
   * @since 2019-06-14
   **/
 object MonitorMain {
-
   // 屏蔽日志
   Logger.getLogger("org.apache").setLevel(Level.WARN)
 
@@ -25,10 +26,10 @@ object MonitorMain {
     val load = ConfigFactory.load()
 
     // 创建kafka相关参数
-    val kafkaParams = Map(
+    val kafkaParams = Map[String, Object](
       ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> load.getString("kafka.bootstrapServers"),
       ConsumerConfig.GROUP_ID_CONFIG -> load.getString("kafka.groupId"),
-      ConsumerConfig.MAX_POLL_RECORDS_CONFIG -> 20000,
+      ConsumerConfig.MAX_POLL_RECORDS_CONFIG -> "20000",
       ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer],
       ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer]
     )
@@ -36,54 +37,43 @@ object MonitorMain {
     val topics = load.getString("kafka.topics").split(",").toSet
 
     // StreamingContext
-    val sparkConf = new SparkConf().setAppName("Real-time").setMaster("local[*]")
+    val sparkConf = new SparkConf().setAppName("Real-time")/*.setMaster("local[*]")*/
 
     // 批次时间应该大于这个批次处理完的总的花费（total delay）时间
     val ssc = new StreamingContext(sparkConf, Seconds(3))
 
-    // 从kafka读数据 --- 从数据库中获取到当前的消费到的偏移量位置 -- 从该位置接着往后消费
-    case class OffSet(id: Int, topic: String, partitions: Int, offset: Long, groupId: String) {}
-
-    // 从数据库加载上次的offset
     DBs.setup()
-    val result = DB.readOnly(implicit session => {
-      SQL("select * from t_offset where group_id = ?").bind(load.getString("kafka.group.id")).map(rs => {
-        OffSet(rs.int("id"), rs.string("topic"), rs.int("partitions"), rs.long("offset"), rs.string("group_id"))
+    // 从 mysql 中读取 kafka 偏移量信息映射到 TopicPartition ---- 从数据库中获取到当前的消费到的偏移量位置 -- 从该位置接着往后消费
+    val offSetMap: Map[TopicPartition, Long] = DB.readOnly(implicit session => {
+      SQL("select * from t_offset where group_id = ?").bind(load.getString("kafka.groupId")).map(rs => {
+        (new TopicPartition(rs.string("topic"), rs.int("partition")), rs.long("offset"))
       }).list().apply()
-    })
+    }).toMap
 
-
-    //    val offSetMap: Map[TopicAndPartition, Long] = DB.readOnly(implicit session => {
-    //      SQL("select * from t_offset where group_id = ?").bind(load.getString("kafka.group.id")).map(rs => {
-    //        (TopicAndPartition(rs.string("topic"), rs.int("partitions")), rs.long("offset"))
-    //      }).list().apply()
-    //    }).toMap
-    //
-    //
-    //    // 假设程序第一次启动
-    //    val stream = if (offSetMap.isEmpty) {
-    //      println("第一次启动")
-    //      KafkaUtils.createDirectStream(ssc, LocationStrategies.PreferConsistent, ConsumerStrategies.Subscribe[String, String](topics, kafkaParams))
-    //    } else {
-    //      var checkedOffset = Map[TopicAndPartition, Long]()
-    //      val kafkaCluster = new KafkaCluster(kafkaParams)
-    //      val earliestLeaderOffsets = kafkaCluster.getEarliestLeaderOffsets(offSetMap.keySet)
-    //      if (earliestLeaderOffsets.isRight) {
-    //        val topicAndPartitionToOffset = earliestLeaderOffsets.right.get
-    //        // 开始对比
-    //        checkedOffset = offSetMap.map(owner => {
-    //          val clusterEarliestOffset = topicAndPartitionToOffset.get(owner._1).get.offset
-    //          if (owner._2 >= clusterEarliestOffset) {
-    //            owner
-    //          } else {
-    //            (owner._1, clusterEarliestOffset)
-    //          }
-    //        })
-    //      }
-    //      // 程序非第一次启动
-    //      val messageHandler = (mm: MessageAndMetadata[String, String]) => (mm.key(), mm.message())
-    //      KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder, (String, String)](ssc, kafkaParams, checkedOffset, messageHandler)
-    //    }
+    val stream = if (offSetMap.isEmpty) {
+      // 程序第一次启动
+      KafkaUtils.createDirectStream(ssc, LocationStrategies.PreferConsistent, ConsumerStrategies.Subscribe[String, String](topics, kafkaParams))
+    } else {
+      /*var checkedOffset = Map[TopicPartition, Long]()
+      val consumer = new KafkaConsumer[String, String](kafkaParams.asJava)
+      consumer.subscribe(topics.asJava)
+      val earliestLeaderOffsets = kafkaCluster.getEarliestLeaderOffsets(offSetMap.keySet)
+      if (earliestLeaderOffsets.isRight) {
+        val topicAndPartitionToOffset = earliestLeaderOffsets.right.get
+        // 开始对比
+        checkedOffset = offSetMap.map(owner => {
+          val clusterEarliestOffset = topicAndPartitionToOffset.get(owner._1).get.offset
+          if (owner._2 >= clusterEarliestOffset) {
+            owner
+          } else {
+            (owner._1, clusterEarliestOffset)
+          }
+        })
+      }*/
+      // 程序非第一次启动
+      //val messageHandler = (mm: MessageAndMetadata[String, String]) => (mm.key(), mm.message())
+      KafkaUtils.createDirectStream(ssc, LocationStrategies.PreferConsistent, ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offSetMap))
+    }
 
     //    /**
     //      * receiver 接受数据是在Executor端 cache -- 如果使用的窗口函数的话，没必要进行cache, 默认就是cache， WAL ；
@@ -180,20 +170,29 @@ object MonitorMain {
     //        })
     //        client.close()
     //      })
-    //
-    //
+    //  )
 
-    // 记录偏移量
-    //          offsetRanges.foreach(osr => {
-    //            DB.autoCommit { implicit session =>
-    //              sql"REPLACE INTO t_offset(`topic`, `group_id`, `partitions`, `offset`) VALUES (?, ?, ?, ?)"
-    //                .bind(osr.topic, load.getString("kafka.group.id"), osr.partition, osr.untilOffset).update().apply()
-    //            }
-    //            // println(s"${osr.topic} ${osr.partition} ${osr.fromOffset} ${osr.untilOffset}")
-    //          })
-    //        })
+    stream.foreachRDD({ rdd =>
+      //数据处理
+      val result: RDD[(String, Int)] = rdd.flatMap(_.value().split(" ")).map((_, 1)).reduceByKey(_ + _)
+      result.foreach(println)
+      result.foreachPartition({ it =>
+        val jedis = MonitorUtils.getJedisClient()
+        it.foreach({ va =>
+          jedis.hincrBy("wc", va._1, va._2)
+        })
+        jedis.close()
+      })
 
-    // 结果存入到 redis, 将偏移量存入到mysql
+      // 记录偏移量存入 mysql
+      val offsetRanges: Array[OffsetRange] = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+      DB.localTx { implicit session =>
+        for (or <- offsetRanges) {
+          SQL("REPLACE INTO `t_offset` (`group_id`, `topic`, `partition`, `offset`) VALUES (?, ?, ?, ?)")
+            .bind(load.getString("kafka.groupId"), or.topic, or.partition, or.untilOffset).update().apply()
+        }
+      }
+    })
     // 启动程序，等待程序终止
     ssc.start()
     ssc.awaitTermination()
