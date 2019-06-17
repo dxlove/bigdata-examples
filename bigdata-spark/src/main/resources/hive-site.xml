@@ -3,7 +3,7 @@
 <configuration>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://39.108.125.41:3306/hive235?useSSL=false</value>
+        <value>jdbc:mysql://ip:3306/hive235?useSSL=false</value>
     </property>
 
     <property>
@@ -13,12 +13,12 @@
 
     <property>
         <name>javax.jdo.option.ConnectionUserName</name>
-        <value>root</value>
+        <value>xxx</value>
     </property>
             
     <property>
         <name>javax.jdo.option.ConnectionPassword</name>
-        <value>cloud</value>
+        <value>xxx</value>
     </property>
 
     <property>

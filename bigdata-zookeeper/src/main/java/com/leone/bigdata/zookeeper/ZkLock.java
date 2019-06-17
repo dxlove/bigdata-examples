@@ -36,7 +36,7 @@ public class ZkLock {
 
     public ZkLock() {
         try {
-            zkClient = new ZooKeeper("39.108.125.41:2181", 10000, event -> {
+            zkClient = new ZooKeeper("ip:2181", 10000, event -> {
                 if (event.getState() == Watcher.Event.KeeperState.Disconnected) {
                     System.out.println("失去连接");
                 }

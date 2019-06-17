@@ -16,7 +16,7 @@ object RedisClient {
   private var jedisPool: Pool[Jedis] = _
 
   def main(args: Array[String]): Unit = {
-    init("39.108.125.41", 6379, 1000, "1DF2D35543FE", 2)
+    init("ip", 6379, 1000, "1DF2D35543FE", 2)
     val map = new java.util.HashMap[String, String]
     map.put("name", "1")
     map.put("age", "2")

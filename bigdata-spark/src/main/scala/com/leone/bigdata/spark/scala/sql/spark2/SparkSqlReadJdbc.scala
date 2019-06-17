@@ -17,7 +17,7 @@ object SparkSqlReadJdbc {
     val spark = SparkSession.builder().appName("SparkSqlReadJdbc").master("local[*]").getOrCreate()
 
     /*val dbTable: DataFrame = spark.read.format("jdbc").options(
-      Map("url" -> "jdbc:mysql://39.108.125.41:3306/db01?useSSL=false",
+      Map("url" -> "jdbc:mysql://ip:3306/db01?useSSL=false",
         "driver" -> "com.mysql.jdbc.Driver",
         "user" -> "root",
         "dbtable" -> "t_student",

@@ -15,15 +15,8 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 object ScalaStreamingKafkaWc {
 
   def main(args: Array[String]): Unit = {
-
-    // offset保存路径
-    val checkpointPath = "file:///e:/tmp/spark/streaming/checkpoint/kafka-direct"
-
     val conf = new SparkConf().setAppName("ScalaKafkaStream").setMaster("local[2]")
-
     val ssc = new StreamingContext(conf, Seconds(3))
-
-    ssc.checkpoint(checkpointPath)
 
     val bootstrapServers = "node-2:9092,node-3:9092,node-4:9092"
     val groupId = "group-streaming"

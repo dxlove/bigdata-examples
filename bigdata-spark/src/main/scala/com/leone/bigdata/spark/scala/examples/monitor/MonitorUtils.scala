@@ -14,7 +14,7 @@ import redis.clients.jedis.{Jedis, JedisPool}
 object MonitorUtils {
 
   val dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS")
-  val jedisPool = new JedisPool(new GenericObjectPoolConfig, "39.108.125.41", 6379, 1000, "1DF2D35543FE", 0)
+  val jedisPool = new JedisPool(new GenericObjectPoolConfig, "ip", 6379, 1000, "1DF2D35543FE", 0)
 
   /**
     * 计算时差

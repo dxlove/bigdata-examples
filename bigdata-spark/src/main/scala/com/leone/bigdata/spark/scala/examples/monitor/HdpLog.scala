@@ -179,7 +179,7 @@ class HdpLog(val sessionid: String,
   override def productArity: Int = 85
 
   // 比较两个对象是否是同一个对象
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[Log]
+  override def canEqual(that: Any): Boolean = that.isInstanceOf[HdpLog]
 }
 
 

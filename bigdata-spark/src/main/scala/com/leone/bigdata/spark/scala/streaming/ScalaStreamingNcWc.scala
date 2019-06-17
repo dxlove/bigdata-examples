@@ -13,10 +13,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 object ScalaStreamingNcWc {
 
   def main(args: Array[String]): Unit = {
-
     // 创建sparkContext
-//    val sc = new SparkContext(new SparkConf().setAppName("nc-wc-steaming").setMaster("local[2]"))
-    val sc = new SparkContext(new SparkConf().setAppName("nc-wc-steaming"))
+    val sc = new SparkContext(new SparkConf().setAppName("nc-wc-steaming").setMaster("local[2]"))
 
     // 设置批次产生的时间间隔
     val ssc = new StreamingContext(sc, Seconds(5))

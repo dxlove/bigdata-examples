@@ -48,7 +48,6 @@ object CallLogMain {
     val df = dataFrame.where($"done" > 1000).orderBy($"done" desc, $"up" asc).limit(30)
 
     df.show()
-
     session.stop()
   }
 
