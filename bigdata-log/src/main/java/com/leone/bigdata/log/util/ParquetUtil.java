@@ -1,5 +1,6 @@
 package com.leone.bigdata.log.util;
 
+import com.leone.bigdata.common.util.RandomValue;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.column.ParquetProperties;
 import org.apache.parquet.example.data.Group;
@@ -27,7 +28,6 @@ public class ParquetUtil {
 
     private static Logger logger = LoggerFactory.getLogger(ParquetUtil.class);
 
-
     private static String schemaStr = "message schema {"
             + "optional int64 user_id;"
             + "optional binary account (UTF8);"
@@ -40,8 +40,8 @@ public class ParquetUtil {
     private static MessageType schema = MessageTypeParser.parseMessageType(schemaStr);
 
     public static void main(String[] args) {
-        String inputPath = "e:\\tmp\\input\\parquet\\user.parquet";
-        String outputPath = "e:\\tmp\\input\\parquet\\user.parquet";
+        String inputPath = "file:///root/logs/user.parquet";
+        String outputPath = "file:///root/logs/user.parquet";
     }
 
     /**
@@ -50,8 +50,7 @@ public class ParquetUtil {
      * @throws IOException
      */
     public static void parquetWriter(Long count, String outputPath) throws IOException {
-        ExampleParquetWriter.Builder builder = ExampleParquetWriter
-                .builder(new Path(outputPath))
+        ExampleParquetWriter.Builder builder = ExampleParquetWriter.builder(new Path(outputPath))
                 .withWriteMode(ParquetFileWriter.Mode.CREATE)
                 .withWriterVersion(ParquetProperties.WriterVersion.PARQUET_1_0)
                 .withCompressionCodec(CompressionCodecName.SNAPPY)
@@ -68,6 +67,7 @@ public class ParquetUtil {
                     .append("deleted", RandomValue.RANDOM.nextBoolean())
                     .append("create_time", RandomValue.randomTime()));
         }
+        logger.info("save parquet file {} successful...", outputPath);
         writer.close();
     }
 

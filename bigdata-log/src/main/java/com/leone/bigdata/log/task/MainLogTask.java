@@ -2,9 +2,12 @@ package com.leone.bigdata.log.task;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leone.boot.log.kafka.KafkaSender;
-import com.leone.boot.log.util.ParquetUtil;
-import com.leone.boot.log.util.RandomValue;
+import com.leone.bigdata.common.util.RandomValue;
+import com.leone.bigdata.log.kafka.KafkaSender;
+import com.leone.bigdata.log.util.OrcUtil;
+import com.leone.bigdata.log.util.ParquetUtil;
+import com.leone.bigdata.common.util.RandomValue;
+import org.apache.orc.OrcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,19 +48,16 @@ public class MainLogTask {
     private static LocalDateTime localDateTime = LocalDateTime.now();
 
     /**
-     * 18332562075,15032293356,2017/09/11 01:01:08,541
-     * 打电话日志
+     * 产生 csv 日志
      */
     @Async
     //@Scheduled(fixedRate = 10)
     public void csvLogTask() {
-        CSV_LOG.info(offset + "," + RandomValue.randomUsername() + "," + RandomValue.randomTel() + "," + RandomValue.randomInt(70) + "," + RandomValue.randomInt(10000) + "," + RandomValue.randomBirth());
-        offset++;
-        //CSV_LOG.info(System.currentTimeMillis() + "," + RandomValue.randomUsername() + "," + RandomValue.RANDOM.nextInt(60) + "," + RandomValue.randomTime() + "," + RandomValue.randomUUID().substring(15) + "," + RandomValue.randomWords() + "," + RANDOM.nextBoolean());
+        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomTel() + "," + RandomValue.randomInt(70) + "," + RandomValue.randomInt(10000) + "," + RandomValue.randomBirth());
     }
 
     /**
-     * 产生json日志任务
+     * 产生 json 日志任务
      */
     @Async
     //@Scheduled(fixedDelay = 10)
@@ -66,57 +66,40 @@ public class MainLogTask {
     }
 
     /**
-     * 基本日志task
+     * 基本日志 task
      */
     @Async
     //@Scheduled(fixedDelay = 5)
     public void commonLogTask() {
-        //COMMON_LOG.info(RandomValue.randomWords() + " " + RandomValue.randomWords() + " " + RandomValue.randomWords() + " " + RandomValue.randomWords());
         COMMON_LOG.info(RandomValue.randomInt(1000000000) + "," + RandomValue.randomUsername() + "," + RandomValue.randomInt(80) + "," + RandomValue.randomDouble(100));
     }
 
     /**
-     * 向kafka发送数据
+     * 向 kafka 发送数据
      */
     @Async
-    @Scheduled(fixedDelay = 500)
+    //@Scheduled(fixedDelay = 500)
     public void kafkaSenderTask() {
         kafkaSender.send("topic-kafka-streaming", RandomValue.randomWords() + " " + RandomValue.randomWords() + " " + RandomValue.randomWords() + " " + RandomValue.randomWords());
         offset++;
     }
 
     /**
-     * 访问日志
-     */
-    @Async
-    //@Scheduled(fixedRate = 20)
-    public void accessLogTask() {
-        COMMON_LOG.info(System.currentTimeMillis() + "\t" + RandomValue.randomMac() + "\t" + RandomValue.randomTel() + "\t" + RandomValue.randomUrl() + "\t" + RandomValue.randomDriver() + "\t" + RandomValue.randomIp() + "\t" + RANDOM.nextInt(100) + "\t" + RANDOM.nextInt(5000));
-    }
-
-
-    /**
      * 产生 parquet 文件
      */
     @Async
-    //@Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0/15 * * * * ?")
     public void parquetTask() throws IOException {
-        String file = "/root/logs/parquet/user-20190410-" + String.format("%03d", offset) + ".parquet";
-        ParquetUtil.parquetWriter(100000L, file);
-        offset++;
-        System.out.println("save parquet file " + file + " successful...");
+        ParquetUtil.parquetWriter(100000L, "file:///root/logs/parquet/user-" + RandomValue.currentTimestampStr() + ".parquet");
     }
 
     /**
-     * @Scheduled() 产生 orc 文件
+     * 产生 orc 文件
      */
     @Async
     //@Scheduled(cron = "0/10 * * * * ?")
     public void orcTask() throws IOException {
-        String file = "/root/logs/orc/user-20190129-" + String.format("%03d", offset) + ".orc";
-        ParquetUtil.parquetWriter(100000L, file);
-        offset++;
-        System.out.println("save orc file " + file + " successful...");
+        OrcUtil.orcWriter(100000, "file:///root/logs/orc/user-" + RandomValue.currentTimestampStr() + ".orc");
     }
 
 }

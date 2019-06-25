@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 @Configuration
 public class AppConfig extends WebMvcConfigurationSupport {
 
-    //线程池初始数量大小
+    // 线程池初始数量大小
     private static final int CORE_POOL_SIZE = 15;
     private static final int MAX_POOL_SIZE = 100;
     private static final int QUEUE_CAPACITY = 10;

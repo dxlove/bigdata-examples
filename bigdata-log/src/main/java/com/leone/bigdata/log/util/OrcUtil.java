@@ -1,5 +1,6 @@
 package com.leone.bigdata.log.util;
 
+import com.leone.bigdata.common.util.RandomValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -10,7 +11,10 @@ import org.apache.orc.CompressionKind;
 import org.apache.orc.OrcFile;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.Writer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -19,18 +23,15 @@ import java.nio.charset.StandardCharsets;
  * @author leone
  * @since 2019-04-01
  **/
-public class OrcUtil {
+public abstract class OrcUtil {
 
-    private OrcUtil() {
-    }
+    private static final Logger logger = LoggerFactory.getLogger(OrcUtil.class);
 
     public static void main(String[] args) throws Exception {
-
-        writeOrc(10000, "d:\\root\\logs\\orc\\test.orc");
-
+        orcWriter(10000, "file:///root//logs//orc//test.orc");
     }
 
-    public static void writeOrc(Integer count, String fileName) throws Exception {
+    public static void orcWriter(int count, String outputPath) throws IOException {
         TypeDescription schema = TypeDescription.createStruct()
                 .addField("user_id", TypeDescription.createLong())
                 .addField("username", TypeDescription.createString())
@@ -38,10 +39,10 @@ public class OrcUtil {
                 .addField("sex", TypeDescription.createString())
                 .addField("deleted", TypeDescription.createBoolean())
                 .addField("create_time", TypeDescription.createTimestamp());
-        //输出ORC文件本地绝对路径
+        // 输出ORC文件本地绝对路径
         Configuration conf = new Configuration();
         FileSystem.getLocal(conf);
-        Writer writer = OrcFile.createWriter(new Path(fileName),
+        Writer writer = OrcFile.createWriter(new Path(outputPath),
                 OrcFile.writerOptions(conf)
                         .setSchema(schema)
                         .stripeSize(67108864)
@@ -49,7 +50,6 @@ public class OrcUtil {
                         .blockSize(134217728)
                         .compress(CompressionKind.ZLIB)
                         .version(OrcFile.Version.V_0_12));
-
         VectorizedRowBatch batch = schema.createRowBatch();
 
         for (int i = 0; i < count; i++) {
@@ -65,7 +65,8 @@ public class OrcUtil {
                 batch.reset();
             }
         }
-    }
 
+        logger.info("writer orc file {} successful...", outputPath);
+    }
 
 }
