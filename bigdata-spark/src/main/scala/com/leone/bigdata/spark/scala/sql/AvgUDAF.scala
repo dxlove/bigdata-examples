@@ -1,10 +1,15 @@
-package com.leone.bigdata.spark.scala.sql.spark2
+package com.leone.bigdata.spark.scala.sql
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.types._
 
-
+/**
+  * <p>
+  *
+  * @author leone
+  * @since 2019-06-25
+  **/
 object AvgUDAF extends UserDefinedAggregateFunction {
   override def inputSchema: StructType = {
     // 给定UDAF的输出参数类型

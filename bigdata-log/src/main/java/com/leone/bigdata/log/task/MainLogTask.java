@@ -53,14 +53,14 @@ public class MainLogTask {
     @Async
     @Scheduled(fixedRate = 5)
     public void csvLogTask() {
-        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomDateTime() + "," + RandomValue.RANDOM.nextBoolean() + "," + RandomValue.randomStr(12) + "," + RandomValue.randomInt(70) + "," + RandomValue.randomWords());
+        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomInt(2) + "," + RandomValue.randomInt(80) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime() + "," + RANDOM.nextBoolean());
     }
 
     /**
      * 产生 json 日志任务
      */
     @Async
-    @Scheduled(fixedDelay = 5)
+    //@Scheduled(fixedDelay = 5)
     public void jsonLogTask() throws JsonProcessingException {
         JSON_LOG.info(objectMapper.writeValueAsString(RandomValue.randomUser()));
     }

@@ -1,6 +1,6 @@
-package com.leone.bigdata.spark.scala.sql.spark2
+package com.leone.bigdata.spark.scala.sql
 
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.SparkSession
 
 import scala.math.BigDecimal.RoundingMode
 
@@ -12,14 +12,15 @@ import scala.math.BigDecimal.RoundingMode
   * @author leone
   * @since 2018-12-23
   */
-object SparkSqlUDF {
+object SparkSqlUDAF {
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder().appName("sql").master("local[*]").getOrCreate()
+    val spark = SparkSession.builder().appName("UDAF").master("local[*]").getOrCreate()
 
-    // 写一个Double数据格式化的自定义函数(给定保留多少位小数部分)
+    // 写一个 Double 数据格式化的自定义函数(给定保留多少位小数部分)
     spark.sqlContext.udf.register(
-      "doubleValueFormat", // 自定义函数名称
+      // 自定义函数名称
+      "doubleValueFormat",
       (value: Double, scale: Int) => {
         // 自定义函数处理的代码块
         BigDecimal.valueOf(value).setScale(scale, RoundingMode.HALF_DOWN).doubleValue()
@@ -31,13 +32,12 @@ object SparkSqlUDF {
     spark.sql(
       """
         |SELECT
-        |  deptno,
+        |  dept_no,
         |  doubleValueFormat(AVG(sal), 2) AS avg_sal,
         |  doubleValueFormat(selfAvg(sal), 2) AS self_avg_sal
-        |FROM hadoop09.emp
-        |GROUP BY deptno
+        |FROM t_dept
+        |GROUP BY dept_no
       """.stripMargin).show()
-
     spark.stop()
   }
 

@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.sql.spark2
+package com.leone.bigdata.spark.scala.sql
 
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -11,9 +11,7 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 object ScalaSparkSqlJoin {
 
   def main(args: Array[String]): Unit = {
-    // spark2.x 统一使用sparkSession作为spark的入口
-    val spark = SparkSession.builder().appName("sql").master("local[*]").getOrCreate()
-
+    val spark = SparkSession.builder().appName("join").master("local[*]").getOrCreate()
     // 导入隐式转换
     import spark.implicits._
 
@@ -28,6 +26,7 @@ object ScalaSparkSqlJoin {
     })
     val personDataFrame = personDataset.toDF("user_id", "username", "country")
 
+
     // 表二
     val country: Dataset[String] = spark.createDataset(List("China,中国", "America,美国", "Japan,日本"))
     val countryDataFrame = country.map(line => {
@@ -39,7 +38,8 @@ object ScalaSparkSqlJoin {
 
     // 表一表二关联
     personDataFrame.createTempView("tv_user")
-    countryDataFrame.createTempView("tv_country")
+    countryDataFrame.createTempView("tv_order")
+
     spark.sql("select user_id, username, country, zh_name from tv_user join tv_country on tv_user.country = tv_country.name").show()
 
 //    val result = personDataFrame.join(countryDataFrame, $"country" === $"name")

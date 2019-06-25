@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.sql.spark2
+package com.leone.bigdata.spark.scala.sql
 
 import java.util.Properties
 

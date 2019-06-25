@@ -27,7 +27,7 @@ public class Rdd2DataFrameReflection {
 
         JavaRDD<Student> studentJavaRDD = javaRDD.map((Function<String, Student>) s -> {
             String[] lines = s.split(",");
-            return new Student(Integer.parseInt(lines[0]), lines[1], Integer.parseInt(lines[2]));
+            return new Student(Integer.parseInt(lines[0]), lines[1], Integer.parseInt(lines[2]), Integer.parseInt(lines[3]), Integer.parseInt(lines[4]), Integer.parseInt(lines[5]));
         });
 
         // 通过反射的方式将javaRDD转换为dataFrame
@@ -46,7 +46,7 @@ public class Rdd2DataFrameReflection {
         JavaRDD<Row> rowJavaRDD = rowDataset.javaRDD();
 
         // 将rdd中的数据进行映射成Student
-        JavaRDD<Student> map = rowJavaRDD.map((Function<Row, Student>) row -> new Student(row.getInt(0), row.getString(1), row.getInt(2)));
+        JavaRDD<Student> map = rowJavaRDD.map((Function<Row, Student>) row -> new Student(row.getInt(0), row.getString(1), row.getInt(2), row.getInt(3), row.getInt(4), row.getInt(5)));
 
         List<Student> collect = map.collect();
 

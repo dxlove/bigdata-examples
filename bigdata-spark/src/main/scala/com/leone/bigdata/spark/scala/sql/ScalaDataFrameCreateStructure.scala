@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.sql.spark2
+package com.leone.bigdata.spark.scala.sql
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
@@ -13,10 +13,11 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 object ScalaDataFrameCreateStructure {
 
   def main(args: Array[String]): Unit = {
-    val session = SparkSession.builder().appName("dataFrame").master("local[*]").getOrCreate()
-    val rdd: RDD[String] = session.sparkContext.textFile(args(0))
+    val spark = SparkSession.builder().appName("dataFrame").master("local[*]").getOrCreate()
 
-    val rowRDD: RDD[Row] = rdd.map(line => {
+    val stringRdd: RDD[String] = spark.sparkContext.textFile(args(0))
+
+    val rowRDD: RDD[Row] = stringRdd.map(line => {
       val fields = line.split(",")
       Row(fields(0).toLong, fields(1), fields(2).toInt, fields(3).toInt, fields(4).toDouble, fields(5), fields(6).toBoolean)
     })
@@ -32,10 +33,10 @@ object ScalaDataFrameCreateStructure {
       StructField("deleted", BooleanType, true)
     ))
 
-    val dataFrame: DataFrame = session.createDataFrame(rowRDD, schema)
+    val dataFrame: DataFrame = spark.createDataFrame(rowRDD, schema)
 
     // 导入隐式转换
-    import session.implicits._
+    import spark.implicits._
     // 导入聚合函数
     import org.apache.spark.sql.functions._
 
@@ -45,7 +46,11 @@ object ScalaDataFrameCreateStructure {
 
     dataFrame.groupBy($"age" as "age").agg(count("*") as "counts").orderBy($"counts" desc, $"age" asc).show()
 
-    session.stop()
+    // dataFrame 转换为 rdd
+    val rdd = dataFrame.rdd
+    rdd.foreach(println)
+
+    spark.stop()
   }
 
 }

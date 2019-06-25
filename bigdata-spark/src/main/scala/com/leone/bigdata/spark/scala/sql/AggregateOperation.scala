@@ -1,4 +1,4 @@
-package com.leone.bigdata.spark.scala.sql.spark2
+package com.leone.bigdata.spark.scala.sql
 
 import org.apache.spark.sql.SparkSession
 
@@ -19,7 +19,6 @@ object AggregateOperation {
     // 加载两份数据型成两个dataFrame
     val department = spark.read.json("file:///root/logs/join/department.json")
     val employee = spark.read.json("file:///root/logs/join/employee.json")
-
 
     employee.join(department, $"depId" === $"id")
       .groupBy(department("name"))
