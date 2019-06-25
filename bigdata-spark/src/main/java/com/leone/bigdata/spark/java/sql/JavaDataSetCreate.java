@@ -23,17 +23,17 @@ public class JavaDataSetCreate {
         JavaSparkContext javaSparkContext = new JavaSparkContext(spark.sparkContext());
 
         // 1.通过结构化数据
-        Dataset<User> dataset = spark.read().json(args[1]).as(Encoders.bean(User.class));
+        //Dataset<User> dataset = spark.read().json(args[1]).as(Encoders.bean(User.class));
 
         // 2.通过spark api 转换为dataSet
-        //JavaRDD<String> stringRDD = spark.sparkContext().textFile(args[0], 3).toJavaRDD();
+        JavaRDD<String> stringRDD = spark.sparkContext().textFile(args[0], 3).toJavaRDD();
 
-        //RDD<User> userJavaRDD = stringRDD.map((Function<String, User>) s -> {
-        //    String[] fields = s.split(",");
-        //    return new User(Long.valueOf(fields[0]), fields[1], fields[4], fields[6], Integer.valueOf(fields[5]), fields[2], Boolean.valueOf(fields[4]));
-        //}).rdd();
+        RDD<User> userJavaRDD = stringRDD.map((Function<String, User>) s -> {
+            String[] fields = s.split(",");
+            return new User(Long.valueOf(fields[0]), fields[1], Integer.valueOf(fields[2]), Integer.valueOf(fields[3]), Double.valueOf(fields[4]), fields[5], Boolean.valueOf(fields[6]));
+        }).rdd();
 
-        //Dataset<User> dataset = spark.createDataset(userJavaRDD, Encoders.bean(User.class));
+        Dataset<User> dataset = spark.createDataset(userJavaRDD, Encoders.bean(User.class));
 
         // 等于sql中查询所有
         dataset.show();

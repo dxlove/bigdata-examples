@@ -1,6 +1,9 @@
 package com.leone.bigdata.spark.java.sql;
 
 import com.leone.bigdata.spark.java.bean.User;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.rdd.RDD;
@@ -12,6 +15,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,12 +29,12 @@ import java.util.Date;
  **/
 public class JavaDataFrameCreateReflect {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SparkSession spark = SparkSession.builder().master("local[*]").appName("dataFrame").getOrCreate();
         // 1.直接通过json数据格式创建DataFrame spark2.x中 dataFrame 等于是 dataset + 泛型 Row
-        //Dataset<Row> dataFrame = spark.read().json("file:///root/logs/json/");
+        //Dataset<Row> dataFrame = spark.read().json("args[0]");
 
-        JavaRDD<String> stringRDD = spark.read().textFile(args[0]).javaRDD();
+        JavaRDD<String> stringRDD = spark.read().textFile(args[1]).javaRDD();
 
         // 2.通过RDD创建，通过Java反射转换
         JavaRDD<User> userJavaRDD = stringRDD.map((Function<String, User>) s -> {
@@ -45,14 +49,26 @@ public class JavaDataFrameCreateReflect {
         // 打印表的原数据信息
         dataFrame.printSchema();
 
+        if (args[2] != null) {
+            Configuration conf = new Configuration();
+            FileSystem fileSystem = FileSystem.get(conf);
+            Path path = new Path(args[2]);
+            if (fileSystem.exists(path)) {
+                fileSystem.delete(path, true);
+            }
+        }
+
         dataFrame.select(dataFrame.col("username"), dataFrame.col("age").plus(1), dataFrame.col("createTime"))
-                .where("createTime < date_format('2018-01-08', 'yyyy-MM-dd')").write().csv(args[1]);
+                .where("createTime < date_format('2018-01-08', 'yyyy-MM-dd')").write().csv(args[2]);
 
         // 根据某一列的值进行过滤
         dataFrame.filter(dataFrame.col("age").gt(18)).show();
 
         // 根据某一列进行分组
         dataFrame.groupBy(dataFrame.col("age")).count().orderBy(dataFrame.col("age")).describe("age").show();
+
+        JavaRDD<Row> javaRDD = dataFrame.toJavaRDD();
+
 
         spark.stop();
     }

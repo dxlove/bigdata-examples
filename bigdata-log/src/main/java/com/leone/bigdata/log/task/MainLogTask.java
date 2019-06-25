@@ -60,7 +60,7 @@ public class MainLogTask {
      * 产生 json 日志任务
      */
     @Async
-    //@Scheduled(fixedDelay = 5)
+    @Scheduled(fixedDelay = 5)
     public void jsonLogTask() throws JsonProcessingException {
         JSON_LOG.info(objectMapper.writeValueAsString(RandomValue.randomUser()));
     }
@@ -88,9 +88,9 @@ public class MainLogTask {
      * 产生 parquet 文件
      */
     @Async
-    //@Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0/15 * * * * ?")
     public void parquetTask() throws IOException {
-        ParquetUtil.parquetWriter(100000L, "file:///root/logs/parquet/user-" + RandomValue.currentTimestampStr() + ".parquet");
+        ParquetUtil.parquetWriter(100000L, "file:///Users/leone/Documents/logs/parquet/user-" + RandomValue.currentTimestampStr() + ".parquet");
     }
 
     /**
@@ -99,7 +99,7 @@ public class MainLogTask {
     @Async
     //@Scheduled(cron = "0/10 * * * * ?")
     public void orcTask() throws IOException {
-        OrcUtil.orcWriter(100000, "file:///root/logs/orc/user-" + RandomValue.currentTimestampStr() + ".orc");
+        OrcUtil.orcWriter(100000, "file:///Users/leone/Documents/logs/orc/user-" + RandomValue.currentTimestampStr() + ".orc");
     }
 
 }
