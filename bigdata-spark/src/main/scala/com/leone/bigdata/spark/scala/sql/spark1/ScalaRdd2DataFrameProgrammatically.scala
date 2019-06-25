@@ -10,16 +10,13 @@ import org.apache.spark.{SparkConf, SparkContext}
   * @author leone
   * @since 2019-03-20
   **/
-object ScalaRDD2DataFrameProgrammatically {
+object ScalaRdd2DataFrameProgrammatically {
 
   def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setAppName("dataFrame").setMaster("local[*]")
-
-    val sparkContext = new SparkContext(conf)
-
+    val sparkContext = new SparkContext(new SparkConf().setAppName("dataFrame").setMaster("local[*]"))
     val sqlContext = new SQLContext(sparkContext)
 
-    val rdd = sparkContext.textFile("file:///tmp/input/student")
+    val rdd = sparkContext.textFile(args(0))
 
     val lineRDD = rdd.map { line => {
       val lines = line.split(",")
@@ -41,7 +38,7 @@ object ScalaRDD2DataFrameProgrammatically {
     val studentRDD = dataFrame.rdd
     studentRDD.foreach(println)
 
-
+    sparkContext.stop()
   }
 
 }

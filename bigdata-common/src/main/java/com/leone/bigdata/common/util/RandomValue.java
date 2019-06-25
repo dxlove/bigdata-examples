@@ -199,15 +199,13 @@ public abstract class RandomValue {
      */
     public static Map randomUser() {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("user_id", offset);
+        map.put("userId", offset++);
         map.put("username", randomUsername());
-        map.put("sex", RANDOM.nextBoolean() ? "男" : "女");
-        map.put("age", RANDOM.nextInt(58) + 12);
+        map.put("sex", randomInt(2));
+        map.put("age", RANDOM.nextInt(80));
+        map.put("credit", randomDouble(100));
+        map.put("createTime", randomTime());
         map.put("deleted", RANDOM.nextBoolean());
-        map.put("tel", randomTel());
-        map.put("create_time", randomTime());
-        map.put("integral", RANDOM.nextInt(9990) + 10);
-        offset++;
         return map;
     }
 
@@ -476,7 +474,7 @@ public abstract class RandomValue {
 
     public static void main(String[] args) {
         for (int i = 0; i < 10000; i++) {
-            System.out.println(randomDouble(100));
+            System.out.println(randomInt(2));
         }
     }
 

@@ -20,7 +20,6 @@ public class JavaSparkLoadJson {
     public static void main(String[] args) throws AnalysisException {
         // 创建 spark 统一入口
         SparkSession spark = SparkSession.builder().appName("javaSql").config("spark.master", "local[*]").getOrCreate();
-
         Dataset<Row> json = spark.read().json("file:///root/logs/json/");
 
         json.createTempView("t_user");

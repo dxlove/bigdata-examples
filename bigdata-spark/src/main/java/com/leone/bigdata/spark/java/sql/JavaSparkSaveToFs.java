@@ -17,13 +17,11 @@ public class JavaSparkSaveToFs {
         SparkSession spark = SparkSession.builder().master("local[*]").appName("save").getOrCreate();
 
         Properties props = new Properties();
-        props.setProperty("user", "root");
-        props.setProperty("password", "root");
-
-        Dataset<Row> dataset = spark.read().format("parquet").load("file:///root/logs/parquet/");
+        props.setProperty("user", "xxx");
+        props.setProperty("password", "xxx");
+        Dataset<Row> dataset = spark.read().format("parquet").load(args[0]);
 
         dataset.createTempView("t_user");
-
         dataset.printSchema();
 
         spark.sql("select * from t_user where user_id < 100000 order by user_id desc").show(30);

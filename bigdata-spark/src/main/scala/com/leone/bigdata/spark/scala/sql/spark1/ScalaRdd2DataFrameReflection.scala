@@ -1,5 +1,6 @@
 package com.leone.bigdata.spark.scala.sql.spark1
 
+import com.leone.bigdata.spark.scala.caseclass.Student
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -9,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   * @author leone
   * @since 2019-03-20
   **/
-object ScalaRDD2DataFrameReflection {
+object ScalaRdd2DataFrameReflection {
 
   def main(args: Array[String]): Unit = {
 
@@ -22,12 +23,11 @@ object ScalaRDD2DataFrameReflection {
     // 导入隐式转换
     import sqlContext.implicits._
 
-    val rdd = sparkContext.textFile("file:///tmp/input/student")
+    val rdd = sparkContext.textFile(args(0))
 
     val studentRDD = rdd.map { line => line.split(",") }.map { arr => Student(arr(0).trim().toInt, arr(1), arr(2).toInt) }
 
     val studentDF = studentRDD.toDF()
-
 
     val view = studentDF.createTempView("t_student")
 
@@ -38,9 +38,7 @@ object ScalaRDD2DataFrameReflection {
     val rows = studentRDD1.collect()
     rows.foreach(println)
 
-
+    sparkContext.stop()
   }
-
-  case class Student(id: Int, name: String, age: Int)
 
 }

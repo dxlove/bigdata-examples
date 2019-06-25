@@ -19,15 +19,12 @@ public class JavaSparkLoadParquet {
     public static void main(String[] args) {
         // 创建 sparkSql 上下文
         SparkSession spark = SparkSession.builder().appName("parquet").config("spark.master", "local[*]").getOrCreate();
-
-        Dataset<Row> parquet = spark.read().parquet("file:///root/logs/parquet/");
+        Dataset<Row> parquet = spark.read().parquet(args[0]);
 
         parquet.registerTempTable("t_user");
-
         spark.sql("select * from t_user where age < 34").show();
 
         JavaRDD<Row> rowJavaRDD = parquet.javaRDD();
-
         JavaRDD<String> map = rowJavaRDD.map((Function<Row, String>) row -> "name" + row.getString(1));
 
         List<String> collect = map.collect();

@@ -28,7 +28,6 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- 导入 spark core 依赖 -->
@@ -36,7 +35,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- spark sql 依赖 -->
@@ -44,7 +42,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark streaming 依赖-->
@@ -52,7 +49,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Spark MLlib依赖 -->
@@ -60,7 +56,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark 整合hive的依赖 -->
@@ -68,7 +63,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--spark 整合kafka-->
@@ -83,7 +77,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql-kafka-0-10_2.11</artifactId>
             <version>${spark.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- 指定hadoop-client API的版本 -->
@@ -91,7 +84,6 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
             <version>${hadoop.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--mysql 依赖-->
@@ -106,7 +98,6 @@
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-jdbc</artifactId>
             <version>1.2.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- scala连接数据库-->
@@ -127,7 +118,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- jedis 工具类 -->
@@ -135,6 +125,12 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.leone.bigdata</groupId>
+            <artifactId>bigdata-common</artifactId>
+            <version>1.1.0.RELEASE</version>
         </dependency>
 
     </dependencies>

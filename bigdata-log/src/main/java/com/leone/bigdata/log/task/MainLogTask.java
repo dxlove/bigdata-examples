@@ -51,16 +51,16 @@ public class MainLogTask {
      * 产生 csv 日志
      */
     @Async
-    //@Scheduled(fixedRate = 10)
+    @Scheduled(fixedRate = 5)
     public void csvLogTask() {
-        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomTel() + "," + RandomValue.randomInt(70) + "," + RandomValue.randomInt(10000) + "," + RandomValue.randomBirth());
+        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomDateTime() + "," + RandomValue.RANDOM.nextBoolean() + "," + RandomValue.randomStr(12) + "," + RandomValue.randomInt(70) + "," + RandomValue.randomWords());
     }
 
     /**
      * 产生 json 日志任务
      */
     @Async
-    //@Scheduled(fixedDelay = 10)
+    @Scheduled(fixedDelay = 5)
     public void jsonLogTask() throws JsonProcessingException {
         JSON_LOG.info(objectMapper.writeValueAsString(RandomValue.randomUser()));
     }
@@ -88,7 +88,7 @@ public class MainLogTask {
      * 产生 parquet 文件
      */
     @Async
-    @Scheduled(cron = "0/15 * * * * ?")
+    //@Scheduled(cron = "0/15 * * * * ?")
     public void parquetTask() throws IOException {
         ParquetUtil.parquetWriter(100000L, "file:///root/logs/parquet/user-" + RandomValue.currentTimestampStr() + ".parquet");
     }

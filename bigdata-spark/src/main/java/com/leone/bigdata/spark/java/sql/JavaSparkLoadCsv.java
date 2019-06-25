@@ -14,7 +14,6 @@ public class JavaSparkLoadCsv {
 
     public static void main(String[] args) {
         SparkSession spark = SparkSession.builder().appName("csv").master("local[*]").getOrCreate();
-
         Dataset<Row> dataset = spark.read().format("csv").load(args[0]);
 
         dataset.printSchema();

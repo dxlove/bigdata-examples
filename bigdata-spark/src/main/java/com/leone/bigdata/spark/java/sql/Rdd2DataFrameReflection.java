@@ -17,18 +17,13 @@ import java.util.List;
  * @author leone
  * @since 2019-03-20
  **/
-public class RDD2DataFrameReflection {
+public class Rdd2DataFrameReflection {
 
     public static void main(String[] args) {
-
-        // 创建普通的RDD
-        SparkConf conf = new SparkConf().setAppName("rdd").setMaster("local[*]");
-
-        JavaSparkContext sc = new JavaSparkContext(conf);
-
+        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("rdd").setMaster("local[*]"));
         SQLContext sqlContext = new SQLContext(sc);
 
-        JavaRDD<String> javaRDD = sc.textFile("file:///root/input/student");
+        JavaRDD<String> javaRDD = sc.textFile(args[0]);
 
         JavaRDD<Student> studentJavaRDD = javaRDD.map((Function<String, Student>) s -> {
             String[] lines = s.split(",");
@@ -57,7 +52,7 @@ public class RDD2DataFrameReflection {
 
         System.out.println(collect);
 
-
+        sc.stop();
     }
 
 

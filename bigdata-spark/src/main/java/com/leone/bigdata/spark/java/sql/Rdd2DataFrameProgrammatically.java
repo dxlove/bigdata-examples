@@ -17,13 +17,12 @@ import java.util.List;
  * @author leone
  * @since 2019-03-20
  **/
-public class RDD2DataFrameProgrammatically {
+public class Rdd2DataFrameProgrammatically {
 
     public static void main(String[] args) throws AnalysisException {
         SparkSession spark = SparkSession.builder().master("local[5]").appName("rdd").getOrCreate();
         JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
-
-        JavaRDD<String> javaRDD = jsc.textFile("file:///root/student/");
+        JavaRDD<String> javaRDD = jsc.textFile(args[0]);
 
         // 创建javaRDD
         JavaRDD<Row> rows = javaRDD.map((Function<String, Row>) s -> {
@@ -38,7 +37,6 @@ public class RDD2DataFrameProgrammatically {
         fieldList.add(DataTypes.createStructField("age", DataTypes.IntegerType, true));
 
         StructType structType = DataTypes.createStructType(fieldList);
-
         Dataset<Row> dataFrame = spark.createDataFrame(rows, structType);
 
         dataFrame.registerTempTable("t_student");
