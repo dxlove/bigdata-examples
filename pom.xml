@@ -23,6 +23,7 @@
         <module>bigdata-hbase</module>
         <module>bigdata-flink</module>
         <module>bigdata-scala</module>
+        <module>bigdata-log</module>
     </modules>
 
     <build>

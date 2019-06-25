@@ -194,7 +194,7 @@ public class DBUtil {
 
 
     public static void main(String[] args) throws Exception {
-        List<String> select = DBUtil.getInstance().select("39.108.125.41", 3306, "db02", "root", "cloud", "select * from t_http", Http.class);
+        List<String> select = DBUtil.getInstance().select("ip", 3306, "db02", "xxx", "xxx", "select * from t_http", Http.class);
         ObjectMapper objectMapper = new ObjectMapper();
         select.forEach(e -> {
             try {
@@ -205,26 +205,26 @@ public class DBUtil {
                     int ping = CommonUtil.ping(ss.getIp(), 4, 5000);
                     // 设置超时时间
                     String sql = "update t_http set timeout = " + ping + " where http_id = " + ss.getHttp_id();
-                    execute("39.108.125.41", 3306, "db02", "root", "cloud", sql);
+                    execute("ip", 3306, "db02", "xxx", "xxx", sql);
 
                     // 设置是否可用
                     if (ping != 0) {
-                        execute("39.108.125.41", 3306, "db02", "root", "cloud", "update t_http set enable = 1 where http_id = " + ss.getHttp_id());
+                        execute("ip", 3306, "db02", "xxx", "xxx", "update t_http set enable = 1 where http_id = " + ss.getHttp_id());
                         System.out.println(sql);
                     } else {
-                        execute("39.108.125.41", 3306, "db02", "root", "cloud", "update t_http set enable = 0 where http_id = " + ss.getHttp_id());
+                        execute("ip", 3306, "db02", "xxx", "xxx", "update t_http set enable = 0 where http_id = " + ss.getHttp_id());
                         System.err.println(sql);
                     }
 
                     // 设置国家信息
                     String country = CommonUtil.getIpArea(ss.getIp());
-                    execute("39.108.125.41", 3306, "db02", "root", "cloud", "update t_http set country = '" + country + "' where http_id = " + ss.getHttp_id());
+                    execute("ip", 3306, "db02", "xxx", "xxx", "update t_http set country = '" + country + "' where http_id = " + ss.getHttp_id());
 
                 } else {
                     //System.out.println(ssr.getIp());
                     //String address = InetAddress.getByName(ssr.getIp()).getHostAddress();
                     //String sql = "update t_ssr set ip = " + address + " where ssr_id = " + ssr.getSsr_id();
-                    //execute("39.108.125.41", 3306, "db02", "root", "cloud", sql);
+                    //execute("ip", 3306, "db02", "xxx", "xxx", sql);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -232,10 +232,6 @@ public class DBUtil {
         });
     }
 
-    //推荐使用
-    //public static int ping(String ipAddress) throws Exception {
-    //    return Runtime.getRuntime().exec("ping -c 1 " + ipAddress).waitFor();
-    //}
 
     static class Config {
         String url;
