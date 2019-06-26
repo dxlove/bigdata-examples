@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @author leone
  * @since 2019-04-24
  **/
-public class CommonUtil {
+public abstract class CommonUtil {
 
     private CommonUtil() {
     }
@@ -80,6 +80,11 @@ public class CommonUtil {
         }
     }
 
+    /**
+     *
+     * @param ipAddr
+     * @return
+     */
     public static String getIpArea(String ipAddr) {
         StringBuilder sb = new StringBuilder();
         try {
@@ -144,6 +149,13 @@ public class CommonUtil {
         return null;
     }
 
+    /**
+     *
+     * @param ipAddress
+     * @param pingCount
+     * @param timeOut
+     * @return
+     */
     public static int ping(String ipAddress, int pingCount, int timeOut) {
         BufferedReader in = null;
         Runtime r = Runtime.getRuntime();
@@ -186,7 +198,5 @@ public class CommonUtil {
         }
         return 0;
     }
-
-
 
 }

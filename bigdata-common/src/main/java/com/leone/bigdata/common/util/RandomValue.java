@@ -358,7 +358,7 @@ public abstract class RandomValue {
      * @return
      */
     public static Date randomDateTime() {
-        return new Date(RANDOM.nextInt((int) (System.currentTimeMillis() / 1000)) * 1000L);
+        return new Date(RANDOM.nextInt((int) System.currentTimeMillis()));
     }
 
     /**

@@ -27,7 +27,6 @@ public class JavaSparkLoadCsv {
         // 显示前N条
         dataset.head(5);
 
-        //0,张盯偿,15908672349,25,3986,19770404
         // 分组
         //dataset.select("_c2").as("age").groupBy("_c2").count().as("age_count").orderBy("_c2").show();
 

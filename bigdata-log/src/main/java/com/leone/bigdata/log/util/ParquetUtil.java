@@ -29,20 +29,24 @@ public class ParquetUtil {
     private static Logger logger = LoggerFactory.getLogger(ParquetUtil.class);
 
     private static String schemaStr = "message schema {"
-            + "optional int64 user_id;"
-            + "optional binary account (UTF8);"
-            + "optional int32 age;"
+            + "optional int64 userId;"
+            + "optional binary username (UTF8);"
             + "optional int32 sex;"
-            + "optional binary description (UTF8);"
-            + "optional boolean deleted;"
-            + "optional binary create_time (UTF8);}";
+            + "optional int32 age;"
+            + "optional double credit;"
+            + "optional binary createTime (UTF8);"
+            + "optional boolean deleted;}";
+
 
     private static MessageType schema = MessageTypeParser.parseMessageType(schemaStr);
 
-    public static void main(String[] args) {
-        String inputPath = "file:///root/logs/user.parquet";
-        String outputPath = "file:///root/logs/user.parquet";
+    public static void main(String[] args) throws IOException {
+        //String inputPath = "file:///root/logs/user.parquet";
+        //String outputPath = "file:///root/logs/user.parquet";
+        //parquetWriter(100000L,outputPath);
     }
+
+    private static long offset;
 
     /**
      * 生成parquet文件
@@ -59,13 +63,14 @@ public class ParquetUtil {
         SimpleGroupFactory groupFactory = new SimpleGroupFactory(schema);
         for (long i = 0; i < count; i++) {
             writer.write(groupFactory.newGroup()
-                    .append("user_id", i + RandomValue.RANDOM.nextInt(1000000000))
-                    .append("account", RandomValue.randomNum(16))
-                    .append("age", (RandomValue.RANDOM.nextInt(60) + 12))
+                    .append("userId", offset++)
+                    .append("username", RandomValue.randomUsername())
                     .append("sex", RandomValue.RANDOM.nextInt(2))
-                    .append("description", RandomValue.randomWords())
+                    .append("age", (RandomValue.randomInt(80)))
+                    .append("credit", RandomValue.randomDouble(100))
                     .append("deleted", RandomValue.RANDOM.nextBoolean())
-                    .append("create_time", RandomValue.randomTime()));
+                    .append("createTime", RandomValue.randomTime()));
+
         }
         logger.info("save parquet file {} successful...", outputPath);
         writer.close();

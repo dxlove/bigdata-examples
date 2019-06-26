@@ -31,17 +31,13 @@ public class DBUtil {
     }
 
     /**
-     * @param ip
-     * @param port
-     * @param db
-     * @param username
-     * @param password
+     * @param config
      * @param clazz
      */
-    public List<String> select(String ip, int port, String db, String username, String password, String sql, Class<?> clazz) {
+    public List<String> select(Config config, String sql, Class<?> clazz) {
         Connection conn;
         if (pool.size() < 1) {
-            conn = getConnection(ip, port, db, username, password);
+            conn = getConnection(config);
             pool.add(conn);
         } else {
             conn = pool.get(0);
@@ -116,12 +112,12 @@ public class DBUtil {
      *
      * @return
      */
-    private static Connection getConnection(String ip, int port, String db, String username, String password) {
+    private static Connection getConnection(Config config) {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String dbUrl = String.format("jdbc:mysql://%s:%d/%s?useSSL=false", ip, port, db);
-            conn = DriverManager.getConnection(dbUrl, username, password);
+            String dbUrl = String.format("jdbc:mysql://%s:%d/%s?useSSL=false", config.ip, config.port, config.db);
+            conn = DriverManager.getConnection(dbUrl, config.username, config.password);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -159,11 +155,9 @@ public class DBUtil {
             if (Objects.nonNull(resultSet)) {
                 resultSet.close();
             }
-
             if (Objects.nonNull(statement)) {
                 statement.close();
             }
-
             if (Objects.nonNull(connection)) {
                 connection.close();
             }
@@ -175,10 +169,10 @@ public class DBUtil {
     /**
      * @param sql
      */
-    public static boolean execute(String ip, int port, String db, String username, String password, String sql) {
+    public static boolean execute(Config config, String sql) {
         Connection connection;
         if (pool.size() < 1) {
-            connection = getConnection(ip, port, db, username, password);
+            connection = getConnection(config);
             pool.add(connection);
         } else {
             connection = pool.get(0);
@@ -192,50 +186,9 @@ public class DBUtil {
         return false;
     }
 
-
-    public static void main(String[] args) throws Exception {
-        List<String> select = DBUtil.getInstance().select("ip", 3306, "db02", "xxx", "xxx", "select * from t_http", Http.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        select.forEach(e -> {
-            try {
-                System.out.println(e);
-                Http ss = objectMapper.readValue(e, new TypeReference<Http>() {
-                });
-                if (RegexUtil.checkIp(ss.getIp())) {
-                    int ping = CommonUtil.ping(ss.getIp(), 4, 5000);
-                    // 设置超时时间
-                    String sql = "update t_http set timeout = " + ping + " where http_id = " + ss.getHttp_id();
-                    execute("ip", 3306, "db02", "xxx", "xxx", sql);
-
-                    // 设置是否可用
-                    if (ping != 0) {
-                        execute("ip", 3306, "db02", "xxx", "xxx", "update t_http set enable = 1 where http_id = " + ss.getHttp_id());
-                        System.out.println(sql);
-                    } else {
-                        execute("ip", 3306, "db02", "xxx", "xxx", "update t_http set enable = 0 where http_id = " + ss.getHttp_id());
-                        System.err.println(sql);
-                    }
-
-                    // 设置国家信息
-                    String country = CommonUtil.getIpArea(ss.getIp());
-                    execute("ip", 3306, "db02", "xxx", "xxx", "update t_http set country = '" + country + "' where http_id = " + ss.getHttp_id());
-
-                } else {
-                    //System.out.println(ssr.getIp());
-                    //String address = InetAddress.getByName(ssr.getIp()).getHostAddress();
-                    //String sql = "update t_ssr set ip = " + address + " where ssr_id = " + ssr.getSsr_id();
-                    //execute("ip", 3306, "db02", "xxx", "xxx", sql);
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-    }
-
-
-    static class Config {
-        String url;
+    public static class Config {
         String db;
+        String ip;
         String username;
         String password;
         Integer port;
@@ -243,14 +196,13 @@ public class DBUtil {
         public Config() {
         }
 
-        public Config(String url, String db, String username, String password, Integer port) {
-            this.url = url;
+        public Config(String db, String ip, String username, String password, Integer port) {
             this.db = db;
+            this.ip = ip;
             this.username = username;
             this.password = password;
             this.port = port;
         }
     }
-
 
 }
