@@ -61,10 +61,10 @@ public class HBaseCrudTest {
          */
         for (int i = 1; i <= 20; i++) {
             Put row = new Put(Bytes.toBytes(String.format("%04d", i)));
-            row.addColumn(Bytes.toBytes(f1), Bytes.toBytes("name"), Bytes.toBytes(RandomValue.getName()));
-            row.addColumn(Bytes.toBytes(f1), Bytes.toBytes("age"), Bytes.toBytes(String.valueOf(RandomValue.getNumber(50))));
+            row.addColumn(Bytes.toBytes(f1), Bytes.toBytes("name"), Bytes.toBytes(RandomValue.randomUsername()));
+            row.addColumn(Bytes.toBytes(f1), Bytes.toBytes("age"), Bytes.toBytes(String.valueOf(RandomValue.randomInt(50))));
             String f2 = "f2";
-            row.addColumn(Bytes.toBytes(f2), Bytes.toBytes("address"), Bytes.toBytes(RandomValue.getAddress()));
+            row.addColumn(Bytes.toBytes(f2), Bytes.toBytes("address"), Bytes.toBytes(RandomValue.randomAddress()));
             rows.add(row);
         }
         logger.info("size:{}", rows.size());

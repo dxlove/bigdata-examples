@@ -1,6 +1,7 @@
 package com.leone.bigdata.spark.scala.sql
 
-import org.apache.spark.sql.{Dataset, SparkSession}
+import com.leone.bigdata.spark.scala.caseclass.{Order, User}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /**
   * <p>
@@ -16,34 +17,27 @@ object ScalaSparkSqlJoin {
     import spark.implicits._
 
     // 表一
-    val person: Dataset[String] = spark.createDataset(List("1,jack,China", "2,andy,America", "3,james,Japan"))
-    val personDataset: Dataset[(Long, String, String)] = person.map(line => {
-      val fields = line.split(",")
-      val id = fields(0).toLong
-      val name = fields(1)
-      val country = fields(2)
-      (id, name, country)
+    val userStringRDD = spark.sparkContext.textFile(args(0))
+    val userRDD = userStringRDD.map(_.split(",")).map(e => {
+      User(e(0).toLong, e(1), e(2).toInt, e(3).toInt, e(4).toDouble, e(5), e(6).toBoolean)
     })
-    val personDataFrame = personDataset.toDF("user_id", "username", "country")
-
+    val userDataFrame = spark.createDataFrame(userRDD)
 
     // 表二
-    val country: Dataset[String] = spark.createDataset(List("China,中国", "America,美国", "Japan,日本"))
-    val countryDataFrame = country.map(line => {
-      val fields = line.split(",")
-      val code = fields(0)
-      val name = fields(1)
-      (code, name)
-    }).toDF("name", "zh_name")
+    val orderStringRDD = spark.sparkContext.textFile(args(2))
+    val orderRDD = orderStringRDD.map(_.split(",")).map(e => {
+      (e(0).toLong, e(1).toLong, e(2), e(3).toInt, e(4).toDouble, e(4).toDouble, e(6))
+    })
+    val orderDataFrame = orderRDD.toDF("orderId", "userId", "productName", "productCount", "productPrice", "totalPrice")
 
     // 表一表二关联
-    personDataFrame.createTempView("tv_user")
-    countryDataFrame.createTempView("tv_order")
+    userDataFrame.createTempView("tv_user")
+    orderDataFrame.createTempView("tv_order")
 
-    spark.sql("select user_id, username, country, zh_name from tv_user join tv_country on tv_user.country = tv_country.name").show()
+    spark.sql("select userId, username, productName, totalAmount from tv_user join tv_order on tv_user.userId = tv_order.userId").show()
 
-//    val result = personDataFrame.join(countryDataFrame, $"country" === $"name")
-//    result.select("user_id", "username", "country", "zh_name").show()
+//    val result = userDataFrame.join(orderDataFrame, $"userId" === $"userId")
+//    result.select("userId", "username", "productName", "totalAmount").show()
 
     spark.stop()
   }

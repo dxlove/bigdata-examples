@@ -1,5 +1,8 @@
 package com.leone.bigdata.spark.java.sql;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.Dataset;
@@ -10,6 +13,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +27,7 @@ import java.util.ArrayList;
  **/
 public class JavaDataFrameCreateStructure {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SparkSession spark = SparkSession.builder().master("local[*]").appName("dataFrame").getOrCreate();
 
         JavaRDD<String> stringRDD = spark.read().textFile(args[0]).javaRDD();
@@ -31,15 +35,15 @@ public class JavaDataFrameCreateStructure {
         // 通过动态转换创建dataFrame
         JavaRDD<Row> rowJavaRDD = stringRDD.map((Function<String, Row>) s -> {
             String[] fields = s.split(",");
-            return RowFactory.create(Long.valueOf(fields[0]), fields[1], fields[4], fields[6], Integer.valueOf(fields[5]), fields[2], Boolean.valueOf(fields[4]));
+            return RowFactory.create(Long.valueOf(fields[0]), fields[1], Integer.valueOf(fields[2]), Integer.valueOf(fields[3]), Double.valueOf(fields[4]), fields[5], Boolean.valueOf(fields[6]));
         });
 
         ArrayList<StructField> list = new ArrayList<>();
         list.add(DataTypes.createStructField("userId", DataTypes.LongType, true));
         list.add(DataTypes.createStructField("username", DataTypes.StringType, true));
-        list.add(DataTypes.createStructField("password", DataTypes.StringType, true));
-        list.add(DataTypes.createStructField("description", DataTypes.StringType, true));
+        list.add(DataTypes.createStructField("sex", DataTypes.IntegerType, true));
         list.add(DataTypes.createStructField("age", DataTypes.IntegerType, true));
+        list.add(DataTypes.createStructField("credit", DataTypes.DoubleType, true));
         list.add(DataTypes.createStructField("createTime", DataTypes.StringType, true));
         list.add(DataTypes.createStructField("deleted", DataTypes.BooleanType, true));
 
@@ -49,7 +53,16 @@ public class JavaDataFrameCreateStructure {
         // 打印表的原数据信息
         dataFrame.printSchema();
 
-        dataFrame.select(dataFrame.col("account"), dataFrame.col("age").plus(1), dataFrame.col("createTime"))
+        if (args[1] != null) {
+            Configuration conf = new Configuration();
+            FileSystem fileSystem = FileSystem.get(conf);
+            Path path = new Path(args[1]);
+            if (fileSystem.exists(path)) {
+                fileSystem.delete(path, true);
+            }
+        }
+
+        dataFrame.select(dataFrame.col("username"), dataFrame.col("age").plus(1), dataFrame.col("createTime"))
                 .where("createTime < date_format('2018-01-08', 'yyyy-MM-dd')").write().csv(args[1]);
 
         // 根据某一列的值进行过滤
@@ -57,6 +70,9 @@ public class JavaDataFrameCreateStructure {
 
         // 根据某一列进行分组
         dataFrame.groupBy(dataFrame.col("age")).count().orderBy(dataFrame.col("age")).describe("age").show();
+
+        JavaRDD<Row> javaRDD = dataFrame.toJavaRDD();
+
 
         spark.stop();
     }
