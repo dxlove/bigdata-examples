@@ -4,6 +4,7 @@ import com.leone.bigdata.elasticsearch.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  * @author leone
  * @since 2019-06-27
  **/
+@Repository
 public interface ProductRepository extends ElasticsearchRepository<Product, Long> {
 
     /**

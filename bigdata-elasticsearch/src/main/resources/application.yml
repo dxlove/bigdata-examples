@@ -1,9 +1,21 @@
 server:
   port: 8081
-
 spring:
   data:
     elasticsearch:
-      cluster-name: es
-      cluster-nodes: 127.0.0.1:9200
+      # 默认集群名称可以查看http://127.0.0.1:9200/
+      cluster-name: elasticsearch
+      cluster-nodes: 127.0.0.1:9300
+      repositories:
+        enabled: true
+  datasource:
+    password: root
+    username: root
+    url: jdbc:mysql://127.0.0.1:3306/boot?useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
+mybatis:
+  check-config-location: false
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
