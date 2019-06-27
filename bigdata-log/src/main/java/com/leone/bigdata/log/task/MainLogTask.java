@@ -51,16 +51,17 @@ public class MainLogTask {
      * 产生 csv 日志
      */
     @Async
-    //@Scheduled(fixedRate = 5)
+    @Scheduled(fixedRate = 5)
     public void csvLogTask() {
-        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomInt(2) + "," + RandomValue.randomInt(80) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime() + "," + RANDOM.nextBoolean());
+        //CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomInt(2) + "," + RandomValue.randomInt(80) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime() + "," + RANDOM.nextBoolean());
+        CSV_LOG.info(offset++ + "," + offset + "," + RandomValue.randomGoods() + "," + RandomValue.randomInt(10) + "," + RandomValue.randomDouble(1000) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime());
     }
 
     /**
      * 产生 json 日志任务
      */
     @Async
-    @Scheduled(fixedDelay = 5)
+    //@Scheduled(fixedDelay = 5)
     public void jsonLogTask() throws JsonProcessingException {
         JSON_LOG.info(objectMapper.writeValueAsString(RandomValue.randomUser()));
     }

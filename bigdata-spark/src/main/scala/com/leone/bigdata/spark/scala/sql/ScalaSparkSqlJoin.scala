@@ -1,6 +1,7 @@
 package com.leone.bigdata.spark.scala.sql
 
 import com.leone.bigdata.spark.scala.caseclass.{Order, User}
+import org.apache.spark.sql.types.{DataType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /**
@@ -24,20 +25,31 @@ object ScalaSparkSqlJoin {
     val userDataFrame = spark.createDataFrame(userRDD)
 
     // 表二
-    val orderStringRDD = spark.sparkContext.textFile(args(2))
+    val orderStringRDD = spark.sparkContext.textFile(args(1))
     val orderRDD = orderStringRDD.map(_.split(",")).map(e => {
-      (e(0).toLong, e(1).toLong, e(2), e(3).toInt, e(4).toDouble, e(4).toDouble, e(6))
+      Row(e(0).toLong, e(1).toLong, e(2), e(3).toInt, e(4).toDouble, e(4).toDouble, e(6))
     })
-    val orderDataFrame = orderRDD.toDF("orderId", "userId", "productName", "productCount", "productPrice", "totalPrice")
+
+    val schema = StructType(List(
+      StructField("orderId", LongType, true),
+      StructField("userId", LongType, true),
+      StructField("productName", StringType, true),
+      StructField("productCount", IntegerType, true),
+      StructField("productPrice", DoubleType, true),
+      StructField("totalAmount", DoubleType, true),
+      StructField("createTime", StringType, true)
+    ))
+
+    val orderDataFrame = spark.createDataFrame(orderRDD, schema)
 
     // 表一表二关联
     userDataFrame.createTempView("tv_user")
     orderDataFrame.createTempView("tv_order")
 
-    spark.sql("select userId, username, productName, totalAmount from tv_user join tv_order on tv_user.userId = tv_order.userId").show()
+    //spark.sql("select u.userId, u.username, o.productName, o.totalAmount from tv_user u left join tv_order o on u.userId = o.userId").show()
 
-//    val result = userDataFrame.join(orderDataFrame, $"userId" === $"userId")
-//    result.select("userId", "username", "productName", "totalAmount").show()
+    userDataFrame.join(orderDataFrame, userDataFrame("userId") === orderDataFrame("orderId"), "left")
+      .select(userDataFrame("userId"), userDataFrame("username"), orderDataFrame("productName"), orderDataFrame("totalAmount")).show(15)
 
     spark.stop()
   }

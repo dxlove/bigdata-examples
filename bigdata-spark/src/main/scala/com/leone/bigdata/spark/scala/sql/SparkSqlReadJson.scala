@@ -1,5 +1,6 @@
 package com.leone.bigdata.spark.scala.sql
 
+import com.leone.bigdata.spark.scala.caseclass.{Order, User}
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -10,25 +11,13 @@ import org.apache.spark.sql.SparkSession
   **/
 object SparkSqlReadJson {
 
-  case class User(user_id: Long, username: String, age: Long, sex: String, tel: String, create_time: String, integral: Long)
-
-  case class Person(person_id: Long, age: Int, sex: Int) {}
-
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder()
-      .appName("SparkSqlReadJson")
-      .master("local[*]")
-      .getOrCreate()
+    val spark = SparkSession.builder().appName("SparkSqlReadJson").master("local[*]").getOrCreate()
 
     // 基于已有的结构化数据构造 dataFrame
-    // {"user_id":4,"username":"郑揩公","sex":"女","age":48,"deleted":false,"tel":"13912350867","create_time":"2010-08-31 09:49:05","integral":9282}
-    val dataFrame = spark.read.json("file:///root/logs/json/")
-
-    // dataFrame.show(10)
+    val dataFrame = spark.read.json(args(0))
 
     dataFrame.printSchema()
-
-    // dataFrame.select("user_id", "age").show(10)
 
     import spark.implicits._
 
@@ -47,22 +36,17 @@ object SparkSqlReadJson {
     // spark 的 sql 函数查询零时视图
     spark.sql("select user_id,username,age,sex,tel,create_time,integral from t_user where age < 30 order by user_id asc limit 50").show()
 
-    // 通过jvm的 object 来构造 dataSet
-    // User(101, "james", 18, 1, "15909876789", "2019-03-31 12:23:33", 19)
-    val caseClassDS = Seq(Person(1, 3, 4)).toDF()
+    // 通过jvm的 object 来构造 dataset
+    val orderDataset = Seq(Order(1L, 2L, "iphone", 2, 300.00, 150.00, "2019-01-23 12:00:00")).toDF()
 
-    // caseClassDS.show(10)
 
-    // caseClassDS.map(_ + 1).show()
+    // 基于已有的结构化数据构造dataset 首先获取的是一个dataFrame然后使用as将 dataFrame 转换为dataset
+    var userDataset = spark.read.json(args(2)).as[User]
 
-    // 基于已有的结构化数据构造dataset 首先获取的是一个dataframe然后使用as将dataframe转换为dataset
-    var userDS = spark.read.json("file:///root/logs/json/").as[User]
-
-    userDS.show(5)
+    userDataset.show(5)
 
     spark.stop()
   }
-
 
 
 }

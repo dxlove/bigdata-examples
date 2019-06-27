@@ -18,7 +18,7 @@ object TypedOperation {
 
     import spark.implicits._
 
-    val dataFrame = spark.read.format("json").load("file:///root/logs/json/log-20190331-1.json")
+    val dataFrame = spark.read.format("json").load(args(0))
 
     val userDS = dataFrame.as[User]
 
@@ -46,7 +46,7 @@ object TypedOperation {
 
     //println(dropDuplicates.count())
 
-    val userDS2 = spark.read.format("json").load("file:///root/logs/json/log-20190331-2.json").as[User]
+    val userDS2 = spark.read.format("json").load(args(1)).as[User]
 
     //except 获取当前dataset中有，但是另一个dataset中没有的元素
     // userDS.except(userDS2).show()

@@ -18,17 +18,17 @@ import java.util.List;
  **/
 public class ResourceEdit {
 
-    private static DBUtil.Config config = new DBUtil.Config(null, null, null, null, null);
+    private static DBUtil.Config config = new DBUtil.Config("db02", "39.108.125.41", "root", "cloud", 3306);
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
         List<String> select = DBUtil.getInstance().select(config, "select * from t_http", Http.class);
-        select.forEach(e -> {
+        select.stream().forEach(e -> {
             try {
                 System.out.println(e);
                 Http ss = objectMapper.readValue(e, new TypeReference<Http>() {
                 });
-                if (RegexUtil.checkIp(ss.getIp())) {
+                if (RegexUtil.checkIp(ss.getIp()) && ss.getTimeout() == 1) {
                     int ping = CommonUtil.ping(ss.getIp(), 4, 4000);
                     // 设置超时时间
                     String sql = "update t_http set timeout = " + ping + " where http_id = " + ss.getHttp_id();
