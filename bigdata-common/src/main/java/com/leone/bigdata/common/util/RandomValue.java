@@ -31,11 +31,11 @@ public abstract class RandomValue {
 
     private static final String SEPARATOR_OF_MAC = ":";
 
-    private static final String LETTER = "abcdefghijklmnopqrstuvwxyz";
+    private static final String[] LETTER = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",};
 
-    private static final String CHECKS[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "X"};
+    private static final String[] CHECKS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "X"};
 
-    private static final String NUMBERS[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    private static final String[] NUMBERS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
     private static final String[] URL_PREFIX = "http,https".split(",");
 
@@ -53,7 +53,7 @@ public abstract class RandomValue {
     // 运营商
     private static String[] carriers = {"中国移动", "中国电信", "EE", "中国联通"};
 
-    private static final String PROVINCES[] = {"11", "12", "13", "14", "15", "21", "22", "23",
+    private static final String[] PROVINCES = {"11", "12", "13", "14", "15", "21", "22", "23",
             "31", "32", "33", "34", "35", "36", "37", "41", "42", "43",
             "44", "45", "46", "50", "51", "52", "53", "54", "61", "62",
             "63", "64", "65", "71", "81", "82"};
@@ -130,6 +130,8 @@ public abstract class RandomValue {
             {-569376768, -564133889},
     };
 
+    private static String[] BRAND_NAME = {"苹果", "华为", "小米", "VIVO", "OPPO", "三星", "一加", "魅族", "联想", "金立", "锤子"};
+
     /**
      * 返回Email
      *
@@ -139,8 +141,7 @@ public abstract class RandomValue {
         int length = RANDOM.nextInt(3) + 6;
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            int number = (int) (Math.random() * LETTER.length());
-            sb.append(LETTER.charAt(number));
+            sb.append(LETTER[RANDOM.nextInt(LETTER.length)]);
         }
         sb.append(EMAIL_SUFFIX[(int) (Math.random() * EMAIL_SUFFIX.length)]);
         return sb.toString();
@@ -299,7 +300,7 @@ public abstract class RandomValue {
     public static String randomLetter(Integer length) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            sb.append(LETTER.charAt(CHECKS.length));
+            sb.append(LETTER[RANDOM.nextInt(CHECKS.length)]);
         }
         return sb.toString();
     }
@@ -478,6 +479,14 @@ public abstract class RandomValue {
         }
     }
 
+    /**
+     * 生成随机商标
+     *
+     * @return
+     */
+    public static String randomBrandName() {
+        return BRAND_NAME[RANDOM.nextInt(BRAND_NAME.length)];
+    }
 
 }
 

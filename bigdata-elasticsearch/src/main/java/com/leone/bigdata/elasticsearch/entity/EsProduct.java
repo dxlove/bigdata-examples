@@ -1,7 +1,9 @@
 package com.leone.bigdata.elasticsearch.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <p>
@@ -9,39 +11,57 @@ import java.util.Date;
  * @author leone
  * @since 2019-06-27
  **/
-public class Product implements Serializable {
+@Document(indexName = "store", type = "product", shards = 1, replicas = 0)
+public class EsProduct implements Serializable {
+    private static final long serialVersionUID = -1L;
 
+    @Id
     private Long productId;
 
+    // 商品分类id
     private Integer categoryId;
 
+    // 商品分类名称
+    //@Field(type = FieldType.Keyword)
     private String categoryName;
 
+    // 商品标题
+    //@Field(analyzer = "ik_max_word", type = FieldType.Text)
     private String productTitle;
 
+    // 商品名称
+    //@Field(analyzer = "ik_max_word", type = FieldType.Text)
     private String productName;
 
+    // 商品价格
     private Long productPrice;
 
+    // 搜索关键字
+    //@Field(analyzer = "ik_max_word", type = FieldType.Text)
     private String keywords;
 
+    // 商品序列号
+    //@Field(type = FieldType.Keyword)
     private String productSn;
 
+    // 商标名称
+    //@Field(type = FieldType.Keyword)
     private String brandName;
 
+    // 商品销量
     private Integer productSale;
 
+    // 商品库存
     private Integer stock;
 
     private String description;
 
-    private String picture;
+    public EsProduct(Long productId) {
+        this.productId = productId;
+    }
 
-    private Integer status;
-
-    private Date createTime;
-
-    private Date updateTime;
+    public EsProduct() {
+    }
 
     public Long getProductId() {
         return productId;
@@ -64,7 +84,7 @@ public class Product implements Serializable {
     }
 
     public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName == null ? null : categoryName.trim();
+        this.categoryName = categoryName;
     }
 
     public String getProductTitle() {
@@ -72,7 +92,7 @@ public class Product implements Serializable {
     }
 
     public void setProductTitle(String productTitle) {
-        this.productTitle = productTitle == null ? null : productTitle.trim();
+        this.productTitle = productTitle;
     }
 
     public String getProductName() {
@@ -80,7 +100,7 @@ public class Product implements Serializable {
     }
 
     public void setProductName(String productName) {
-        this.productName = productName == null ? null : productName.trim();
+        this.productName = productName;
     }
 
     public Long getProductPrice() {
@@ -96,7 +116,7 @@ public class Product implements Serializable {
     }
 
     public void setKeywords(String keywords) {
-        this.keywords = keywords == null ? null : keywords.trim();
+        this.keywords = keywords;
     }
 
     public String getProductSn() {
@@ -104,7 +124,7 @@ public class Product implements Serializable {
     }
 
     public void setProductSn(String productSn) {
-        this.productSn = productSn == null ? null : productSn.trim();
+        this.productSn = productSn;
     }
 
     public String getBrandName() {
@@ -112,7 +132,7 @@ public class Product implements Serializable {
     }
 
     public void setBrandName(String brandName) {
-        this.brandName = brandName == null ? null : brandName.trim();
+        this.brandName = brandName;
     }
 
     public Integer getProductSale() {
@@ -136,38 +156,7 @@ public class Product implements Serializable {
     }
 
     public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+        this.description = description;
     }
 
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture == null ? null : picture.trim();
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
 }

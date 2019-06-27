@@ -1,6 +1,6 @@
 package com.leone.bigdata.elasticsearch.repository;
 
-import com.leone.bigdata.elasticsearch.entity.Product;
+import com.leone.bigdata.elasticsearch.entity.EsProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @since 2019-06-27
  **/
 @Repository
-public interface ProductRepository extends ElasticsearchRepository<Product, Long> {
+public interface ProductRepository extends ElasticsearchRepository<EsProduct, Long> {
 
     /**
      * 搜索查询
@@ -24,6 +24,6 @@ public interface ProductRepository extends ElasticsearchRepository<Product, Long
      * @param page         分页信息
      * @return
      */
-    Page<Product> findByProductNameAndProductTitleAndKeywords(String productName, String productTitle, String keywords, Pageable page);
+    Page<EsProduct> findByProductNameAndProductTitleAndKeywords(String productName, String productTitle, String keywords, Pageable page);
 
 }
