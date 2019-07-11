@@ -1,4 +1,4 @@
-package com.leone.flink.wc
+package com.leone.bigdata.flink.wc
 
 import org.apache.flink.api.scala.ExecutionEnvironment
 

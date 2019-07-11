@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration scan="true" scanPeriod="600 seconds" debug="false">
-    <property name="LOG_PATH" value="/Users/leone/Documents/logs/"/>
+    <!-- /Users/leone/Documents/logs/ -->
+    <property name="LOG_PATH" value="/root/logs/"/>
     <property name="LOG_LAYOUT" value="%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:-} [%15.15t] %-40.40logger{39} : %m%n"/>
     <property name="CONSOLE_LOG_PATTERN"
               value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
@@ -19,12 +20,12 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/file/writing.log</file>
+        <file>${LOG_PATH}/file/writing.tmp</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/web/web-%d{yyyyMMdd}-%i.log</fileNamePattern>
             <MaxHistory>7</MaxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>512kB</maxFileSize>
+                <maxFileSize>256kB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -34,12 +35,12 @@
 
 
     <appender name="json-log" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/json/writing.log</file>
+        <file>${LOG_PATH}/json/writing.tmp</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/json/log-%d{yyyyMMdd}-%i.log</fileNamePattern>
             <MaxHistory>7</MaxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>512kB</maxFileSize>
+                <maxFileSize>256kB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
 
@@ -51,12 +52,12 @@
 
 
     <appender name="csv-log" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/csv/writing.log</file>
+        <file>${LOG_PATH}/csv/writing.tmp</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/csv/log-%d{yyyyMMdd}-%i.log</fileNamePattern>
             <MaxHistory>7</MaxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>512kB</maxFileSize>
+                <maxFileSize>256kB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
 
@@ -66,12 +67,12 @@
     </appender>
 
     <appender name="common-log" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/common/writing.log</file>
+        <file>${LOG_PATH}/common/writing.tmp</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/common/log-%d{yyyyMMdd}-%i.log</fileNamePattern>
             <MaxHistory>7</MaxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>512kB</maxFileSize>
+                <maxFileSize>256kB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

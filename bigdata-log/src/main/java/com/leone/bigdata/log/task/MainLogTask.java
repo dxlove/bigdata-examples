@@ -51,10 +51,10 @@ public class MainLogTask {
      * 产生 csv 日志
      */
     @Async
-    @Scheduled(fixedRate = 5)
+    @Scheduled(fixedRate = 10)
     public void csvLogTask() {
-        //CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomInt(2) + "," + RandomValue.randomInt(80) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime() + "," + RANDOM.nextBoolean());
-        CSV_LOG.info(offset++ + "," + offset + "," + RandomValue.randomGoods() + "," + RandomValue.randomInt(10) + "," + RandomValue.randomDouble(1000) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime());
+        CSV_LOG.info(offset++ + "," + RandomValue.randomUsername() + "," + RandomValue.randomInt(2) + "," + RandomValue.randomInt(80) + "," + RandomValue.randomDouble(100) + "," + System.currentTimeMillis() + "," + RANDOM.nextBoolean());
+        //CSV_LOG.info(offset++ + "," + offset + "," + RandomValue.randomGoods() + "," + RandomValue.randomInt(10) + "," + RandomValue.randomDouble(1000) + "," + RandomValue.randomDouble(100) + "," + RandomValue.randomDateTime());
     }
 
     /**
@@ -89,7 +89,7 @@ public class MainLogTask {
      * 产生 parquet 文件
      */
     @Async
-    @Scheduled(cron = "0/15 * * * * ?")
+    //@Scheduled(cron = "0/15 * * * * ?")
     public void parquetTask() throws IOException {
         ParquetUtil.parquetWriter(100000L, "file:///Users/leone/Documents/logs/parquet/user-" + RandomValue.currentTimestampStr() + ".parquet");
     }

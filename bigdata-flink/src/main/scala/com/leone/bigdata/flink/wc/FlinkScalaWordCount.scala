@@ -1,4 +1,4 @@
-package com.leone.flink.wc
+package com.leone.bigdata.flink.wc
 
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.windowing.time.Time

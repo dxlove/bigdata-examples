@@ -1,4 +1,4 @@
-package com.leone.flink.kafka
+package com.leone.bigdata.flink.kafka
 
 import java.util.Properties
 
