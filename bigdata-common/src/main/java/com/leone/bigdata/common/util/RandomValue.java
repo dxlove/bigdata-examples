@@ -37,7 +37,7 @@ public abstract class RandomValue {
 
     private static final String[] NUMBERS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
-    private static final String[] URL_PREFIX = "http,https".split(",");
+    private static final String[] URL_PREFIX = {"http://", "https://"};
 
     private static final String[] URL_SUFFIX = ".com,.cn,.edu,.net,.org".split(",");
 
