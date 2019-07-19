@@ -1,12 +1,16 @@
 package com.leone.bigdata.zookeeper;
 
+import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
+import org.apache.curator.utils.ZookeeperFactory;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
+import org.apache.zookeeper.proto.WatcherEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -43,151 +47,143 @@ public class ZkClient {
 
     private final static Logger logger = LoggerFactory.getLogger(ZkClient.class);
 
-    private final static String ZK_URL = "xxx.xxx.xxx.xxx:2181";
+    private final static String CONNECT_STRING = "ip:2181";
 
-    private final static int TIME_OUT = 5000;
+    private final static int SESSION_TIMEOUT = 5000;
 
-    private static ZooKeeper zkClient = null;
+    private static ZooKeeper zooKeeper;
 
-    @Before
-    public void init() throws Exception {
-        zkClient = new ZooKeeper(ZK_URL, TIME_OUT, watchedEvent -> logger.info("{}", watchedEvent));
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    public static void demo1() throws Exception {
-        //初始化zk
-        ZooKeeper zooKeeper = new ZooKeeper(ZK_URL, TIME_OUT, (WatchedEvent watchedEvent) -> {
-            Watcher.Event.KeeperState state = watchedEvent.getState();
-            Watcher.Event.EventType type = watchedEvent.getType();
-            if (Watcher.Event.KeeperState.SyncConnected == state) {
-                if (Watcher.Event.EventType.None == type) {
-                    //调用此方法测计数减一
+    static {
+        try {
+            zooKeeper = new ZooKeeper(CONNECT_STRING, SESSION_TIMEOUT, (event) -> {
+                Watcher.Event.KeeperState state = event.getState();
+                if (state == Watcher.Event.KeeperState.SyncConnected) {
+                    logger.info("create session successful...");
                     countDownLatch.countDown();
                 }
-            }
-        });
-        //阻碍当前线程进行,除非计数归零
-        countDownLatch.await();
-        try {
-            //创建持久化节点
-            zooKeeper.create("/com.andy", "你好".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-            //获取节点数据
-            byte[] data = zooKeeper.getData("/com.andy", false, null);
-            System.out.println(new String(data));
-            //修改节点数据
-            zooKeeper.setData("/com.andy", "james".getBytes(), 0);
-            //删除节点数据
-            zooKeeper.delete("/com.andy", -1);
-            //创建临时节点 异步创建
-            zooKeeper.create("/com.andy", "tmp".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, new AsyncCallback.StringCallback() {
-                public void processResult(int i, String s, Object o, String s1) {
-                    System.out.println(o);
-                    System.out.println(i);
-                    System.out.println(s1);
-                    System.out.println(s);
-                }
-            }, "a");
-            //获取临时节点数据
-            byte[] tmp = zooKeeper.getData("/com.andy", false, null);
-            System.out.println(new String(tmp));
-            //验证节点是否存在
-            Stat exists = zooKeeper.exists("/com.andy", false);
-            System.out.println(exists);
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
-        zooKeeper.close();
     }
 
+    public static void main(String[] args) throws Exception {
+        countDownLatch.await();
+        String path = "/hello";
+        String childrenPath1 = "/hello/a1";
+        String childrenPath2 = "/hello/a2";
+
+        create(zooKeeper, path, "000");
+
+        Thread.sleep(3000);
+
+        exists(zooKeeper, path);
+
+        Thread.sleep(3000);
+
+        getData(zooKeeper, path);
+
+        Thread.sleep(3000);
+
+        setData(zooKeeper, path, "111");
+
+        Thread.sleep(3000);
+
+        create(zooKeeper, childrenPath1, "001");
+        create(zooKeeper, childrenPath2, "002");
+
+
+        Thread.sleep(3000);
+
+        getData(zooKeeper, path);
+
+        Thread.sleep(3000);
+
+        getChildren(zooKeeper, path);
+
+        Thread.sleep(3000);
+
+        delete(zooKeeper, childrenPath1);
+        delete(zooKeeper, childrenPath2);
+
+        Thread.sleep(3000);
+
+        delete(zooKeeper, path);
+    }
 
     /**
-     * 设置值
+     * PERSISTENT：  永久节点
+     * EPHEMERAL：   临时节点
+     * PERSISTENT_SEQUENTIAL：   永久节点、序列化
+     * EPHEMERAL_SEQUENTIAL：    临时节点、序列化
      *
+     * @param path
+     * @param data
      * @throws Exception
      */
-    @Test
-    public void testSetData() throws Exception {
-        zkClient.setData("/hello", "world".getBytes(), -1);
-        byte[] data = zkClient.getData("/hello", false, null);
-        logger.info(new String(data));
+    public static void create(ZooKeeper zookeeper, String path, String data) throws Exception {
+        // 1.节点的路径 2.节点数据 3:节点的权限 4:节点的类型
+        String s = zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        logger.info("create: {}", s);
     }
 
     /**
-     * 创建节点
-     *
+     * @param zooKeeper
+     * @param path
      * @throws Exception
      */
-    @Test
-    public void testCreate() throws Exception {
-        // 参数1：要创建的节点的路径 参数2：节点数据 参数3：节点的权限 参数4：节点的类型
-        zkClient.create("/hello", "jack".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    public static void exists(ZooKeeper zooKeeper, String path) throws Exception {
+        // 1.节点的路径 2.是否需要监听
+        Stat stat = zooKeeper.exists(path, false);
+        logger.info("exists: {} {}", path, stat);
     }
-
 
     /**
-     * 测试某节点是否存在
-     *
+     * @param zooKeeper
+     * @param path
      * @throws Exception
      */
-    @Test
-    public void testExists() throws Exception {
-        Stat stat = zkClient.exists("/eclipse", false);
-        logger.info(stat == null ? "not exist" : "exist");
+    public static void getData(ZooKeeper zooKeeper, String path) throws Exception {
+        byte[] data = zooKeeper.getData(path, false, null);
+        logger.info("getData: {}", new String(data));
     }
+
+    /**
+     * @param path
+     * @param data
+     * @throws Exception
+     */
+    public static void setData(ZooKeeper zooKeeper, String path, String data) throws Exception {
+        // 1.节点的路径 2.数据 3.版本
+        zooKeeper.setData(path, data.getBytes(), -1);
+        logger.info("setData: {} {}", path, data);
+    }
+
+    /**
+     * @param zooKeeper
+     * @param path
+     * @throws Exception
+     */
+    public static void delete(ZooKeeper zooKeeper, String path) throws Exception {
+        // 1.节点的路径 2.版本 -1 表示所有版本
+        zooKeeper.delete(path, -1);
+        logger.info("delete: {}", path);
+    }
+
 
     /**
      * 获取子节点
      *
+     * @param zooKeeper
+     * @param path
      * @throws Exception
      */
-    @Test
-    public void testGetChild() throws Exception {
-        List<String> children = zkClient.getChildren("/", true);
-        for (String child : children) {
-            logger.info(child);
-        }
+    public static void getChildren(ZooKeeper zooKeeper, String path) throws Exception {
+        // 1.节点的路径 2.版本 -1 表示所有版本
+        List<String> children = zooKeeper.getChildren(path, false);
+        children.forEach(e -> {
+            logger.info("getChildren: {}", e);
+        });
     }
-
-    /**
-     * 删除节点
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testDelete() throws Exception {
-        // 参数2：指定要删除的版本，-1表示删除所有版本
-        zkClient.delete("/abc", -1);
-    }
-
-
-    /**
-     * 获取节点的数据
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testGetDate() throws Exception {
-        byte[] data = zkClient.getData("/eclipse", false, null);
-        logger.info(new String(data));
-    }
-
-    /**
-     * 获取节点的数据
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testWatcher() throws Exception {
-        byte[] data = zkClient.getData("/aa", watchedEvent -> logger.info("{}", watchedEvent), new Stat());
-        logger.info(new String(data));
-        while (true) {
-            Thread.sleep(1000);
-        }
-    }
-
 
 }
