@@ -11,7 +11,7 @@ spring:
   datasource:
     password: cloud
     username: root
-    url: jdbc:mysql://39.108.125.41:3306/db01?useSSL=false
+    url: jdbc:mysql://ip:3306/db01?useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis:

@@ -18,7 +18,7 @@ import java.util.List;
  **/
 public class ResourceEdit {
 
-    private static DBUtil.Config config = new DBUtil.Config("db02", "39.108.125.41", "root", "cloud", 3306);
+    private static DBUtil.Config config = new DBUtil.Config("db02", "ip", "root", "cloud", 3306);
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {

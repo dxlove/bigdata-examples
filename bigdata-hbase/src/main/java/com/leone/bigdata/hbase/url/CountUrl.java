@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.util.BufferRecycler;
 import com.jcraft.jsch.IO;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>找出重复的url
@@ -42,6 +40,10 @@ public class CountUrl {
                         result.add(line);
                     }
                 }
+                Object[] keys = map.values().toArray();
+                Arrays.sort(keys);
+
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
