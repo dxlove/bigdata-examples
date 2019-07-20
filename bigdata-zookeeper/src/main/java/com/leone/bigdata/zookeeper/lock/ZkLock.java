@@ -29,7 +29,7 @@ public class ZkLock {
 
     private static final String LOCK_NODE_NAME = "/lock_" + System.currentTimeMillis();
 
-    private static final String CONNECTION_STRING = "ip:2181";
+    private static final String CONNECTION_STRING = "39.108.125.41:2181";
 
     private static CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -68,13 +68,13 @@ public class ZkLock {
     public static void main(String[] args) throws Exception {
         countDownLatch.await();
         ExecutorService executorService = Executors.newCachedThreadPool();
-
-        ZkLock lock = new ZkLock();
         for (int i = 0; i < 10; i++) {
+            final int a = i;
             executorService.execute(() -> {
+                ZkLock lock = new ZkLock();
                 try {
                     lock.acquireLock();
-                    process();
+                    process(a);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -83,6 +83,7 @@ public class ZkLock {
             });
         }
         executorService.shutdown();
+        System.err.println(index);
     }
 
     /**
@@ -90,11 +91,12 @@ public class ZkLock {
      *
      * @throws InterruptedException
      */
-    private static void process() throws InterruptedException {
-        System.out.println("---------- process start ----------");
+    private static void process(int i) throws InterruptedException {
+        System.out.println("---------- process start " + i + "----------");
         Thread.sleep(random.nextInt(500));
         index++;
-        System.out.println("---------- process end ----------");
+        Thread.sleep(500);
+        System.out.println("---------- process end " + i + "----------");
     }
 
     /**
