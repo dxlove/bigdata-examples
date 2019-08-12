@@ -10,29 +10,36 @@ import java.io.Serializable;
  **/
 public class Student implements Serializable {
 
-    private static final long serialVersionUID = -8055416696321406779L;
-
-    private Integer id;
+    private Integer studentId;
 
     private String name;
 
     private Integer age;
 
+    private Integer sex;
+
+    private Integer score;
+
+    private Integer course;
+
     public Student() {
     }
 
-    public Student(Integer id, String name, Integer age) {
-        this.id = id;
+    public Student(Integer studentId, String name, Integer age, Integer sex, Integer score, Integer course) {
+        this.studentId = studentId;
         this.name = name;
         this.age = age;
+        this.sex = sex;
+        this.score = score;
+        this.course = course;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getStudentId() {
+        return studentId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
     }
 
     public String getName() {
@@ -51,12 +58,27 @@ public class Student implements Serializable {
         this.age = age;
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Integer getCourse() {
+        return course;
+    }
+
+    public void setCourse(Integer course) {
+        this.course = course;
     }
 }

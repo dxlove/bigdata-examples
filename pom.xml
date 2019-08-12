@@ -22,6 +22,9 @@
         <module>bigdata-common</module>
         <module>bigdata-hbase</module>
         <module>bigdata-flink</module>
+        <module>bigdata-scala</module>
+        <module>bigdata-log</module>
+        <module>bigdata-elasticsearch</module>
     </modules>
 
     <build>

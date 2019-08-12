@@ -27,7 +27,6 @@ public class FlowMain {
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String lies = value.toString();
             String[] fields = lies.split("\t");
-            System.out.println(Arrays.toString(fields));
             try {
                 String phone = fields[0];
                 long upFlow = Long.parseLong(fields[fields.length - 3]);
@@ -60,14 +59,14 @@ public class FlowMain {
 
         Configuration conf = new Configuration();
         // 本地运行配置，默认为本地运行配置
-//        conf.set("mapreduce.app-submission.cross-platform", "true");
-//        conf.set("mapred.job.tracker", "local");
-//        conf.set("fs.default.name", "file:///");
+        //conf.set("mapreduce.app-submission.cross-platform", "true");
+        //conf.set("mapred.job.tracker", "local");
+        //conf.set("fs.default.name", "file:///");
 
         // 提交到集群配置 设置job运行的文件系统和资源调度系统
-//        conf.set("fs.defaultFS", "hdfs://node-1:9000");
-//        conf.set("mapreduce.framework.name", "yarn");
-//        conf.set("yarn.resourcemanager.hostname", "node-1");
+        //conf.set("fs.defaultFS", "hdfs://node-1:9000");
+        //conf.set("mapreduce.framework.name", "yarn");
+        //conf.set("yarn.resourcemanager.hostname", "node-1");
 
         Job job = Job.getInstance();
 

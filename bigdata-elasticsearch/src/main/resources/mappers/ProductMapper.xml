@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leone.bigdata.elasticsearch.mapper.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.leone.bigdata.elasticsearch.entity.Product">
+        <id column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="product_title" jdbcType="VARCHAR" property="productTitle"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="product_price" jdbcType="BIGINT" property="productPrice"/>
+        <result column="keywords" jdbcType="VARCHAR" property="keywords"/>
+        <result column="product_sn" jdbcType="VARCHAR" property="productSn"/>
+        <result column="brand_name" jdbcType="VARCHAR" property="brandName"/>
+        <result column="product_sale" jdbcType="INTEGER" property="productSale"/>
+        <result column="stock" jdbcType="INTEGER" property="stock"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="picture" jdbcType="VARCHAR" property="picture"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        product_id, category_id, category_name, product_title, product_name, product_price,
+    keywords, product_sn, brand_name, product_sale, stock, description, picture, status, 
+    create_time, update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_product
+        where product_id = #{productId,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from t_product
+        where product_id = #{productId,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insertSelective" parameterType="com.leone.bigdata.elasticsearch.entity.Product">
+        insert into t_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="categoryName != null">
+                category_name,
+            </if>
+            <if test="productTitle != null">
+                product_title,
+            </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="productPrice != null">
+                product_price,
+            </if>
+            <if test="keywords != null">
+                keywords,
+            </if>
+            <if test="productSn != null">
+                product_sn,
+            </if>
+            <if test="brandName != null">
+                brand_name,
+            </if>
+            <if test="productSale != null">
+                product_sale,
+            </if>
+            <if test="stock != null">
+                stock,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="picture != null">
+                picture,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">
+                #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="categoryName != null">
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="productTitle != null">
+                #{productTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="productPrice != null">
+                #{productPrice,jdbcType=BIGINT},
+            </if>
+            <if test="keywords != null">
+                #{keywords,jdbcType=VARCHAR},
+            </if>
+            <if test="productSn != null">
+                #{productSn,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null">
+                #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="productSale != null">
+                #{productSale,jdbcType=INTEGER},
+            </if>
+            <if test="stock != null">
+                #{stock,jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="picture != null">
+                #{picture,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.leone.bigdata.elasticsearch.entity.Product">
+        update t_product
+        <set>
+            <if test="categoryId != null">
+                category_id = #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="categoryName != null">
+                category_name = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="productTitle != null">
+                product_title = #{productTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="productPrice != null">
+                product_price = #{productPrice,jdbcType=BIGINT},
+            </if>
+            <if test="keywords != null">
+                keywords = #{keywords,jdbcType=VARCHAR},
+            </if>
+            <if test="productSn != null">
+                product_sn = #{productSn,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null">
+                brand_name = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="productSale != null">
+                product_sale = #{productSale,jdbcType=INTEGER},
+            </if>
+            <if test="stock != null">
+                stock = #{stock,jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="picture != null">
+                picture = #{picture,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where product_id = #{productId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.leone.bigdata.elasticsearch.entity.Product">
+        update t_product
+        set category_id   = #{categoryId,jdbcType=INTEGER},
+            category_name = #{categoryName,jdbcType=VARCHAR},
+            product_title = #{productTitle,jdbcType=VARCHAR},
+            product_name  = #{productName,jdbcType=VARCHAR},
+            product_price = #{productPrice,jdbcType=BIGINT},
+            keywords      = #{keywords,jdbcType=VARCHAR},
+            product_sn    = #{productSn,jdbcType=VARCHAR},
+            brand_name    = #{brandName,jdbcType=VARCHAR},
+            product_sale  = #{productSale,jdbcType=INTEGER},
+            stock         = #{stock,jdbcType=INTEGER},
+            description   = #{description,jdbcType=VARCHAR},
+            picture       = #{picture,jdbcType=VARCHAR},
+            status        = #{status,jdbcType=INTEGER},
+            create_time   = #{createTime,jdbcType=TIMESTAMP},
+            update_time   = #{updateTime,jdbcType=TIMESTAMP}
+        where product_id = #{productId,jdbcType=BIGINT}
+    </update>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://ip:3306/hive235?useSSL=false</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>xxx</value>
+    </property>
+            
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>xxx</value>
+    </property>
+
+    <property>
+        <name>hive.security.authorization.enabled</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.security.authorization.createtable.owner.grants</name>
+        <value>ALL</value>
+    </property>
+
+    <property>
+        <name>hive.security.authorization.task.factory</name>
+        <value>org.apache.hadoop.hive.ql.parse.authorization.HiveAuthorizationTaskFactoryImpl</value>
+    </property>
+</configuration>
+

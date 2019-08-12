@@ -22,7 +22,7 @@ public class DBLoader {
         ResultSet res = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://39.108.125.41:3306/boot?useSSL=false", "root", "cloud");
+            conn = DriverManager.getConnection("jdbc:mysql://ip:3306/boot?useSSL=false", "root", "cloud");
             st = conn.createStatement();
             res = st.executeQuery("select url,content from t_url_rule");
             while (res.next()) {

@@ -352,7 +352,9 @@ public class AppLogBean implements Serializable {
             sb.append(build_num).append('\001');
             sb.append(mobile_data_type).append('\001');
             sb.append(promotion_channel).append('\001');
-            sb.append(carrier);
+            sb.append(carrier).append("\001");
+            sb.append(city).append("\001");
+            sb.append(user_id).append("\001");
             return sb.toString();
         }
     }

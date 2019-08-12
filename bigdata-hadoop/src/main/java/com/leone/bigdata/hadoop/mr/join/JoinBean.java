@@ -35,20 +35,6 @@ public class JoinBean implements Writable {
     // 标记为订单还是商品 0: 商品, 1: 订单
     private String flag;
 
-
-    public JoinBean() {
-    }
-
-    public JoinBean(Long orderId, Long productId, String createTime, Long totalAmount, String productName, double productPrice, String flag) {
-        this.orderId = orderId;
-        this.productId = productId;
-        this.createTime = createTime;
-        this.totalAmount = totalAmount;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.flag = flag;
-    }
-
     public void set(Long orderId, Long productId, String createTime, Long totalAmount, String productName, double productPrice, String flag) {
         this.orderId = orderId;
         this.productId = productId;

@@ -536,7 +536,7 @@ object ScalaTransformationOperation {
   }
 
   def main(args: Array[String]): Unit = {
-    subtract()
+    groupByKey()
   }
 
 

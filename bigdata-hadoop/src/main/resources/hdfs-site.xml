@@ -1,5 +1,4 @@
 <configuration>
-
     <property>
         <name>dfs.namenode.name.dir</name>
         <value>/export/data/hadoop/name/</value>
@@ -14,5 +13,4 @@
         <name>dfs.namenode.secondary.http-address</name>
         <value>127.0.0.1:50090</value>
     </property>
-
 </configuration>

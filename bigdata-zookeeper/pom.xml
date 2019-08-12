@@ -12,11 +12,24 @@
 
     <artifactId>bigdata-zookeeper</artifactId>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <dependencies>
+
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.4.12</version>
+            <version>3.5.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>4.2.0</version>
         </dependency>
 
         <dependency>
@@ -41,6 +54,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

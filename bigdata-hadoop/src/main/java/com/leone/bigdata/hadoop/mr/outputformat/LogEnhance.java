@@ -2,6 +2,7 @@ package com.leone.bigdata.hadoop.mr.outputformat;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -30,7 +31,13 @@ public class LogEnhance {
         Text k = new Text();
         NullWritable v = NullWritable.get();
 
-        // 从数据库中加载规则信息倒ruleMap中
+        /**
+         * 初始化时从数据库中加载规则信息倒ruleMap中
+         *
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
             try {
@@ -38,7 +45,6 @@ public class LogEnhance {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
         @Override
@@ -78,20 +84,20 @@ public class LogEnhance {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
 
-        // 要控制不同的内容写往不同的目标路径，可以采用自定义outputformat的方法
         job.setOutputFormatClass(LogEnhancerOutputFormat.class);
 
-        FileInputFormat.setInputPaths(job, new Path("D:/srcdata/webloginput/"));
+        FileInputFormat.setInputPaths(job, new Path(args[0]));
 
-        // 尽管我们用的是自定义outputformat，但是它是继承制fileoutputformat
-        // 在fileoutputformat中，必须输出一个_success文件，所以在此还需要设置输出path
-        FileOutputFormat.setOutputPath(job, new Path("D:/temp/output/"));
+        Path outputPath = new Path(args[1]);
+        FileSystem fileSystem = outputPath.getFileSystem(conf);
+        if (fileSystem.exists(outputPath)) {
+            fileSystem.delete(outputPath, true);
+        }
+        FileOutputFormat.setOutputPath(job, outputPath);
 
         // 不需要reducer
         job.setNumReduceTasks(0);
-
-        job.waitForCompletion(true);
-        System.exit(0);
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 
 }

@@ -30,11 +30,6 @@ public class User implements Serializable {
     public User() {
     }
 
-    @Override
-    public User clone() throws CloneNotSupportedException {
-        return (User) super.clone();
-    }
-
     public User(Long userId, String account, String password, String description, Integer age, Date createTime, Boolean deleted) {
         this.userId = userId;
         this.account = account;
